@@ -1,0 +1,32 @@
+#include "pcb_allocator.h"
+
+typedef struct{
+	int Pid;
+	int Pc;
+	int Reg[16];
+	int Cpsr;
+}PCB;
+
+typedef struct PCB_NODE{
+	PCB pcb_data;
+	struct PCB_NODE * next;
+}PCB_NODE;
+
+
+void allocate_pcb(PCB data){
+	PCB_NODE * node = (PCB_NODE*)malloc(sizeof(PCB_NODE));
+	if (node == NULL){
+		error("allocate error");
+		exit(1);
+	}
+	node->pcb_data = data;
+	node->next = NULL;
+
+	return node;
+}
+
+void add_pcb(PCB data){
+	PCB_NODE * node = allocate_pcb(data);
+
+
+}

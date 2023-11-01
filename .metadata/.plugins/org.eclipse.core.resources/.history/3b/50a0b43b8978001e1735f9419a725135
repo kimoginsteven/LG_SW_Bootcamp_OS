@@ -1,0 +1,38 @@
+
+PCB_NODE * allocate_pcb(PCB data) {
+	PCB_NODE * node = (PCB_NODE*)malloc(sizeof(PCB_NODE));
+	if (node == NULL) {
+		// error
+	}
+
+	printf("add %d\n", data.Pid);
+	node->pcb_data.Pid = data.Pid;
+	node->pcb_data.Pc = data.Pc;
+	memcpy(node->pcb_data.Reg, data.Reg, NUM_REGISTER);
+	node->pcb_data.Cpsr = data.Cpsr;
+
+	node->before = NULL;
+	node->after = NULL;
+
+	return node;
+}
+
+void add_pcb(PCB data) {
+	PCB_NODE * node = allocate_pcb(data);
+
+	if (ptr_PCB_Creator == NULL) {
+		ptr_PCB_Creator = node;
+		ptr_PCB_Current = node;
+		ptr_PCB_Head = node;
+
+		node->after = ptr_PCB_Creator;
+		node->before = ptr_PCB_Creator;
+	}
+	else {
+		node->before = ptr_PCB_Creator;
+		node->after = ptr_PCB_Creator->after;
+		ptr_PCB_Creator->after->before = node;
+		ptr_PCB_Creator->after = node;
+		ptr_PCB_Creator = node;
+	}
+}

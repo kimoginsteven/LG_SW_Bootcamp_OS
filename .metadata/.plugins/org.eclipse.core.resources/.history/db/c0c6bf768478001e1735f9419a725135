@@ -1,0 +1,36 @@
+#include "pcb_allocator.h"
+
+
+PCB * allocate_pcb(PCB data){
+	PCB * node = (PCB*)malloc(sizeof(PCB));
+	if (node == NULL){
+		// error
+	}
+
+	node->Pid = data.Pid;
+	node->Pc = data.Pc;
+	memcpy(node->Reg,data.Reg, NUM_REGISTER);
+	node->Cpsr = data.Cpsr;
+
+	node->before = NULL;
+	node->after = NULL;
+
+	return node;
+}
+
+void add_pcb(PCB data){
+	PCB * node = allocate_pcb(data);
+
+	if(ptr_PCB_Creator == NULL){
+		(*ptr_PCB_Creator)ptr_PCB_Creator = node;
+		node->after = ptr_PCB_Creator;
+		node->before = ptr_PCB_Creator;
+		ptr_PCB_Current = ptr_PCB_Creator;
+	}
+	else{
+
+
+	}
+
+
+}

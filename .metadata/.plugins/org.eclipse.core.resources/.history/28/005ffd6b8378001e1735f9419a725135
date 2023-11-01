@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct PCB{
+	int Pid;
+	int Pc;
+	int Reg[16];
+	int Cpsr;
+
+	struct PCB * before;
+	struct PCB * after;
+}PCB;
+
+typedef struct PCB_NODE{
+	PCB pcb_data;
+	struct PCB_NODE * before;
+	struct PCB_NODE * next;
+}PCB_NODE;
+
+PCB_NODE **
+PCB_NODE ** CURRENT_PCB;
+
+extern PCB_NODE * allocate_pcb(PCB data);
+extern void add_pcb(PCB data);

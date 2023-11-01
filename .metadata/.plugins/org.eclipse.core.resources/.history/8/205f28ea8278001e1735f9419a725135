@@ -1,0 +1,20 @@
+#include "pcb_allocator.h"
+
+
+PCB_NODE * allocate_pcb(PCB data){
+	PCB_NODE * node = (PCB_NODE*)malloc(sizeof(PCB_NODE));
+	if (node == NULL){
+		// error
+	}
+	node->pcb_data = data;
+	node->next = NULL;
+
+	return node;
+}
+
+void add_pcb(PCB data){
+	PCB_NODE * node = allocate_pcb(data);
+
+
+
+}

@@ -1,0 +1,15 @@
+#include "pcb_allocator.h"
+
+typedef struct{
+	int Pid;
+	int Pc;
+	int Reg[16];
+	int Cpsr;
+	PCB_NODE * next;
+}PCB_NODE;
+
+
+
+void allocate_pcb(){
+
+}

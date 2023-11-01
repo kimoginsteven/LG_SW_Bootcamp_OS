@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_REGISTER 16
+
+typedef struct PCB{
+	int Pid;
+	int Pc;
+	int Reg[NUM_REGISTER];
+	int Cpsr;
+
+	struct PCB * before;
+	struct PCB * after;
+}PCB;
+
+typedef struct PCB_NODE{
+	PCB pcb_data;
+	struct PCB_NODE * before;
+	struct PCB_NODE * next;
+}PCB_NODE;
+
+PCB ** ptr_PCB_Creator;
+PCB ** ptr_PCB_Current
+
+extern PCB_NODE * allocate_pcb(PCB data);
+extern void add_pcb(PCB data);

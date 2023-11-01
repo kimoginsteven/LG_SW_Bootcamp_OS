@@ -252,8 +252,8 @@ void CoInitMmuAndL1L2Cache(void)
 
 	CoEnableMmu();
 	L2C_Enable();
-	CoEnableICache();
-	CoEnableDCache();
+	//CoEnableICache();
+	//CoEnableDCache();
 	CoEnableBranchPrediction();
 }
 
