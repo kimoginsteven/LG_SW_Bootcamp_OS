@@ -18,3 +18,7 @@ PCB_NODE * ptr_PCB_Head;
 
 extern PCB_NODE * allocate_pcb(PCB_ADR adr);
 extern void add_pcb(PCB_ADR adr);
+
+extern PCB_ADR get_current_pcb_adr();
+extern void set_current_pcb_adr(PCB_ADR pcb_addr);
+extern PCB_ADR get_next_pcb_adr();
