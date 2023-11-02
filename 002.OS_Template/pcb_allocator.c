@@ -1,5 +1,9 @@
 #include "pcb_allocator.h"
 
+PCB_NODE * ptr_PCB_Creator;
+PCB_NODE * ptr_PCB_Current;
+PCB_NODE * ptr_PCB_Head;
+
 PCB_NODE * allocate_pcb(PCB_ADR pcb_addr) {
 	PCB_NODE * node = (PCB_NODE*)malloc(sizeof(PCB_NODE));
 	if (node == NULL) {

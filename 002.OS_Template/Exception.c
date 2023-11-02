@@ -1,4 +1,6 @@
 #include "device_driver.h"
+#include "process.h"
+#include "pcb_allocator.h"
 
 void Undef_Handler(unsigned int addr, unsigned int mode)
 {
@@ -23,7 +25,7 @@ void Dabort_Handler(unsigned int addr, unsigned int mode)
 	Uart_Printf("Reason[0x%X]\nDomain[0x%X]\nRead(0)/Write(1)[%d]\nAXI-Decode(0)/Slave(1)[%d]\n", r, d, w, sd);
 
 #if 0
-	for(;;); /* ½ÇÇèÀ» À§ÇÏ¿© ´ÙÀ½ ÁÖ¼Ò·Î º¹±ÍÇÏµµ·Ï ÇÚµé·¯¸¦ ¼³°è */
+	for(;;); /* ì‹¤í—˜ì„ ìœ„í•˜ì—¬ ë‹¤ìŒ ì£¼ì†Œë¡œ ë³µê·€í•˜ë„ë¡ í•¸ë“¤ëŸ¬ë¥¼ ì„¤ê³„ */
 #endif
 }
 
@@ -51,9 +53,11 @@ void SVC_Handler(unsigned int addr, unsigned int mode)
 void Invalid_ISR(void)	__attribute__ ((interrupt ("IRQ")));
 void Uart1_ISR(void)	__attribute__ ((interrupt ("IRQ")));
 void Timer0_ISR(void) 	__attribute__ ((interrupt ("IRQ")));
+void Timer0_ISR_context_switch(void)   __attribute__ ((interrupt ("IRQ")));
 void Key3_ISR(void)		__attribute__ ((interrupt ("IRQ")));
 void Key4_ISR(void)		__attribute__ ((interrupt ("IRQ")));
 void SDHC_ISR(void) 	__attribute__ ((interrupt ("IRQ")));
+
 
 void (*ISR_Vector[])(void) =
 {
@@ -126,7 +130,8 @@ void (*ISR_Vector[])(void) =
 		Invalid_ISR,		// 66
 		Invalid_ISR,		// 67
 		Invalid_ISR,		// 68
-		Timer0_ISR,			// 69
+		Timer0_ISR_context_switch,			// 69
+		//Timer0_ISR			//69
 		Invalid_ISR,		// 70
 		Invalid_ISR,		// 71
 		Invalid_ISR,		// 72
@@ -254,4 +259,56 @@ void Timer0_ISR(void)
 
 	LED_Display(value);
 	value = (value + 1) % 4;
+}
+
+void Timer0_ISR_context_switch(void)
+{
+
+
+	//PCB_NODE * node = (PCB_NODE *) Save_Context();
+	//Uart1_Printf("addr is %x", node);
+	//struct PCB * cur_pcb_addr = (struct PCB *) node->pcb_addr;
+
+	//í˜„ìž¬ ì•±ì˜ context ë°±ì—…
+	Save_Context();
+	struct PCB * cur_pcb_addr = (struct PCB *)ptr_PCB_Current->pcb_addr;
+	Uart1_Printf("PCB addr is %x\n", cur_pcb_addr);
+	Uart1_Printf("PCB_pid is %d\n", cur_pcb_addr->PID);
+	Uart1_Printf("PCB_PC is %x\n", cur_pcb_addr->PC);
+	Uart1_Printf("PCB_ADDR is %x\n",cur_pcb_addr->CPSR);
+	Uart1_Printf("PCB_register0 is %x\n",cur_pcb_addr->registers[0]);
+	Uart1_Printf("PCB_register1 is %x\n",cur_pcb_addr->registers[1]);
+	Uart1_Printf("PCB_register14 is %x\n",cur_pcb_addr->registers[14]);
+
+	Uart1_Printf("context switch occurred\n\n");
+
+	static int value = 0;
+
+	rTINT_CSTAT |= ((1<<5)|1);
+	GIC_Clear_Pending_Clear(0,69);
+	GIC_Write_EOI(0, 69);
+
+	LED_Display(value);
+	value = (value + 1) % 4;
+
+	// ë‹¤ìŒ ì•±ì˜ PCB ì£¼ì†Œ ì „í™˜
+	struct PCB *next_pcb_addr = (struct PCB *) get_next_pcb_adr();
+	Uart1_Printf("Next_PCB addr is %x\n", next_pcb_addr);
+	Uart1_Printf("Next_PCB_pid is %x\n", next_pcb_addr->PID);
+	Uart1_Printf("Next_PCB_pc is %x\n", next_pcb_addr->PC);
+
+	// TTBR ê°’ì„ ìž¬ì„¤ì • app0 --> 0x44000000 app1 --> 0x44050000
+	unsigned int ttbr = Change_TTBR( (next_pcb_addr->PID ? 0x44050000 : 0x44000000) );
+	Uart1_Printf("Next_PCB_TTBR is %x\n\n", ttbr);
+	Uart1_Printf("/===============================/\n");
+	Get_Context();
+	/*
+	// ë‹¤ìŒ ì‹¤í–‰í•  ì•±ì˜ context ë³µì›
+	struct PCB *get_context_addr = (struct PCB *)Get_Context();
+	Uart1_Printf("get_context_addr is %x\n", get_context_addr);
+	Uart1_Printf("get_context_addr pid is %x\n", get_context_addr->PID);
+	Uart1_Printf("get_context_addr registers is %x\n", get_context_addr->registers[0]);
+*/
+	Uart1_Printf("/===============================/\n");
+
 }

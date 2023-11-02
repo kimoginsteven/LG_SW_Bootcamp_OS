@@ -194,6 +194,7 @@ void CoLockL2Cache(unsigned int uWayNum);
 void CoUnLockL2Cache(unsigned int uWayNum);
 void CoSetExceptonVectoerBase(unsigned int uBaseAddr);
 void SetTransTable(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
+void SetTransTable_app2(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
 
 /* PA conversion */
 

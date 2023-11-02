@@ -12,9 +12,9 @@ typedef struct PCB_NODE {
 	struct PCB_NODE * after;
 }PCB_NODE;
 
-PCB_NODE * ptr_PCB_Creator;
-PCB_NODE * ptr_PCB_Current;
-PCB_NODE * ptr_PCB_Head;
+extern PCB_NODE * ptr_PCB_Creator;
+extern PCB_NODE * ptr_PCB_Current;
+extern PCB_NODE * ptr_PCB_Head;
 
 extern PCB_NODE * allocate_pcb(PCB_ADR adr);
 extern void add_pcb(PCB_ADR adr);

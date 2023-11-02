@@ -1,4 +1,6 @@
 #include "device_driver.h"
+#include "process.h"
+#include "pcb_allocator.h"
 
 extern WIN_INFO_ST ArrWinInfo[5];
 
@@ -46,7 +48,7 @@ void Main(void)
 	LED_Init();
 	Key_Poll_Init();
 
-	Timer0_Int_Delay(1, 200);
+	Timer0_Int_Delay(1, 2000);
 
 	Uart_Printf("\nOS Template\n");
 
@@ -76,7 +78,7 @@ void Main(void)
 		extern volatile unsigned int sd_insert_flag;
 		SDHC_Init();
 		SDHC_ISR_Enable(1);
-		if(!sd_insert_flag) Uart_Printf("SD ī�� ���� ���!\n");
+		if(!sd_insert_flag) Uart_Printf("SD 카드 삽입 요망!\n");
 		while(!sd_insert_flag);
 		SDHC_Card_Init();
 
@@ -87,29 +89,69 @@ void Main(void)
 	}
 #endif
 
+	// app 마다 pcb 만들고 linked list 구조체에 넣어주기
+	struct PCB *pcb_app0_addr = (struct PCB *) malloc(sizeof(struct PCB));
+	struct PCB *pcb_app1_addr = (struct PCB *) malloc(sizeof(struct PCB));
+	Uart_Printf("\n app0 pcb_addr: %X\n", pcb_app0_addr);
+	Uart_Printf("\n app1 pcb_addr: %X\n", pcb_app1_addr);
+
+	// app0의 PCB 초기화
+	pcb_app0_addr->PID = 0;
+
+	// app1의 PCB 초기화
+	pcb_app1_addr->PID = 1;
+	pcb_app1_addr->CPSR = Get_CPSR(); //이미 T bit는 0
+	pcb_app1_addr->CPSR |= 0x1F; //sys mode로 강제 변환
+	pcb_app1_addr->registers[0] = 123;
+	Uart_Printf("app1 cpsr: %X\n", pcb_app1_addr->CPSR);
+	pcb_app1_addr->PC = RAM_APP0; //VA 영역
+	Uart_Printf("app1 PC: %X\n", pcb_app1_addr->PC);
+
+	// pcb linked list 구조체 생성된 pcb의 주소값 넣어주기
+	add_pcb((PCB_ADR) pcb_app0_addr);
+	add_pcb((PCB_ADR) pcb_app1_addr);
+
 	for(;;)
 	{
 		unsigned char x;
 
-		Uart_Printf("\n������ APP�� �����Ͻÿ� [1]APP0, [2]APP1 >> ");
-		x = Uart1_Get_Char();
-
+		// Uart_Printf("\n실행할 APP을 선택하시오 [1]APP0, [2]APP1 >> ");
+		// x = Uart1_Get_Char();
+		//app0을 먼저 실행
+		Uart_Printf("app0 부터 실행합니다\n");
+		x = '1';
+		/*
 		if(x == '1')
 		{
 			Uart_Printf("\nAPP0 RUN\n", x);
 			SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
 			SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
 			CoInvalidateMainTlb();
+			//struct PCB * pcb_address = (struct PCB *) ptr_PCB_Current->pcb_addr;
+			//Uart_Printf("\n app0 pcb_addr output: %X\n", pcb_address);
+
+			//asid 저장
 			Run_App(RAM_APP0, STACK_BASE_APP0);
 		}
 
 		if(x == '2')
 		{
 			Uart_Printf("\nAPP1 RUN\n", x);
-			SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
+			SetTransTable_app2(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
 			SetTransTable(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 			CoInvalidateMainTlb();
 			Run_App(RAM_APP0, STACK_BASE_APP1);
 		}
+		*/
+		Uart_Printf("\nAPP0 RUN\n", x);
+		SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
+		SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
+		SetTransTable_app2(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
+		SetTransTable(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
+		CoInvalidateMainTlb();
+		Run_App(RAM_APP0, STACK_BASE_APP0);
+
 	}
+	free(pcb_app0_addr);
+	free(pcb_app1_addr);
 }

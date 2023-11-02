@@ -46,6 +46,11 @@ extern unsigned int Get_SP(void);
 extern unsigned int Main_ID(void);
 extern unsigned int TLB_Type(void);
 extern void Run_App(unsigned int addr, unsigned int stack);
+extern unsigned int Get_CPSR(void);
+extern void Save_Context(void);
+extern unsigned int Change_TTBR(unsigned int addr);
+//extern unsigned int Get_Context(void);
+extern void Get_Context(void);
 
 //timer
 extern void Timer0_Delay(int mtime);
@@ -132,3 +137,6 @@ extern void Lcd_Draw_STACK(void);
 extern void Lcd_Printf(int x, int y, int color, int bkcolor, int zx, int zy, char *fmt,...);
 extern void Lcd_Draw_Bar(int x1, int y1, int x2, int y2, int color);
 extern void Lcd_Draw_Line(int x1,int y1,int x2,int y2,int color);
+
+
+

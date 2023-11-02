@@ -153,7 +153,23 @@ void SetTransTable(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaS
 	
 	pTT = (unsigned int *)MMU_PAGE_TABLE_BASE+(uVaStart>>20);
 	nNumOfSec = (0x1000+(uVaEnd>>20)-(uVaStart>>20))%0x1000;
+	for(i=0; i<=nNumOfSec; i++)
+	{
+		*pTT++ = attr|(uPaStart+(i<<20));
+	}
+}
 
+void SetTransTable_app2(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr)
+{
+	int i;
+	unsigned int* pTT;
+	unsigned int nNumOfSec;
+
+	uPaStart &= ~0xfffff;
+	uVaStart &= ~0xfffff;
+
+	pTT = (unsigned int *)MMU_PAGE_TABLE_BASE+(MMU_PAGE_TABLE_SIZE/2)+(uVaStart>>20);
+	nNumOfSec = (0x1000+(uVaEnd>>20)-(uVaStart>>20))%0x1000;
 	for(i=0; i<=nNumOfSec; i++)
 	{
 		*pTT++ = attr|(uPaStart+(i<<20));
@@ -251,9 +267,9 @@ void CoInitMmuAndL1L2Cache(void)
 	CoTTSet_L1L2();
 
 	CoEnableMmu();
-	L2C_Enable();
-	CoEnableICache();
-	CoEnableDCache();
+	//L2C_Enable();
+	//CoEnableICache();
+	//CoEnableDCache();
 	CoEnableBranchPrediction();
 }
 
