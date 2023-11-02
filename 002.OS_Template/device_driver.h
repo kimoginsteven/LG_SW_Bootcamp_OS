@@ -48,9 +48,9 @@ extern unsigned int TLB_Type(void);
 extern void Run_App(unsigned int addr, unsigned int stack);
 extern unsigned int Get_CPSR(void);
 extern void Save_Context(void);
-extern unsigned int Change_TTBR(unsigned int addr);
-//extern unsigned int Get_Context(void);
-extern void Get_Context(void);
+extern void Get_Context_And_Switch(void);
+extern unsigned int Get_ASID(void);
+extern void Set_ASID(unsigned int);
 
 //timer
 extern void Timer0_Delay(int mtime);

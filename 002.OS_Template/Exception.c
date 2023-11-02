@@ -1,6 +1,7 @@
 #include "device_driver.h"
 #include "process.h"
 #include "pcb_allocator.h"
+#include "cp15.h"
 
 void Undef_Handler(unsigned int addr, unsigned int mode)
 {
@@ -130,8 +131,7 @@ void (*ISR_Vector[])(void) =
 		Invalid_ISR,		// 66
 		Invalid_ISR,		// 67
 		Invalid_ISR,		// 68
-		Timer0_ISR_context_switch,			// 69
-		//Timer0_ISR			//69
+		Save_Context,	    // 69
 		Invalid_ISR,		// 70
 		Invalid_ISR,		// 71
 		Invalid_ISR,		// 72
@@ -263,25 +263,17 @@ void Timer0_ISR(void)
 
 void Timer0_ISR_context_switch(void)
 {
-
-
-	//PCB_NODE * node = (PCB_NODE *) Save_Context();
-	//Uart1_Printf("addr is %x", node);
-	//struct PCB * cur_pcb_addr = (struct PCB *) node->pcb_addr;
-
-	//현재 앱의 context 백업
-	Save_Context();
+	/* For Debug
+	Uart1_Printf("======Saved Context======\n");
 	struct PCB * cur_pcb_addr = (struct PCB *)ptr_PCB_Current->pcb_addr;
 	Uart1_Printf("PCB addr is %x\n", cur_pcb_addr);
 	Uart1_Printf("PCB_pid is %d\n", cur_pcb_addr->PID);
 	Uart1_Printf("PCB_PC is %x\n", cur_pcb_addr->PC);
-	Uart1_Printf("PCB_ADDR is %x\n",cur_pcb_addr->CPSR);
+	Uart1_Printf("PCB_CPSR is %x\n",cur_pcb_addr->CPSR);
 	Uart1_Printf("PCB_register0 is %x\n",cur_pcb_addr->registers[0]);
 	Uart1_Printf("PCB_register1 is %x\n",cur_pcb_addr->registers[1]);
 	Uart1_Printf("PCB_register14 is %x\n",cur_pcb_addr->registers[14]);
-
-	Uart1_Printf("context switch occurred\n\n");
-
+	 */
 	static int value = 0;
 
 	rTINT_CSTAT |= ((1<<5)|1);
@@ -293,22 +285,26 @@ void Timer0_ISR_context_switch(void)
 
 	// 다음 앱의 PCB 주소 전환
 	struct PCB *next_pcb_addr = (struct PCB *) get_next_pcb_adr();
+
+	// Cache를 위한 ASID 설정
+	Set_ASID(next_pcb_addr->ASID);
+
+	/* For Debug
+	unsigned int asid = Get_ASID();
+	Uart1_Printf("cur asid : %X\n", asid);
+
+	Uart1_Printf("======Getting Context======\n");
 	Uart1_Printf("Next_PCB addr is %x\n", next_pcb_addr);
 	Uart1_Printf("Next_PCB_pid is %x\n", next_pcb_addr->PID);
 	Uart1_Printf("Next_PCB_pc is %x\n", next_pcb_addr->PC);
+	Uart1_Printf("Next_PCB_cpsr is %x\n", next_pcb_addr->CPSR);
+	Uart1_Printf("Next_PCB_register 0 is %x\n", next_pcb_addr->registers[0]);
+	Uart1_Printf("\n\n\n");
+	*/
 
-	// TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44050000
-	unsigned int ttbr = Change_TTBR( (next_pcb_addr->PID ? 0x44050000 : 0x44000000) );
-	Uart1_Printf("Next_PCB_TTBR is %x\n\n", ttbr);
-	Uart1_Printf("/===============================/\n");
-	Get_Context();
-	/*
-	// 다음 실행할 앱의 context 복원
-	struct PCB *get_context_addr = (struct PCB *)Get_Context();
-	Uart1_Printf("get_context_addr is %x\n", get_context_addr);
-	Uart1_Printf("get_context_addr pid is %x\n", get_context_addr->PID);
-	Uart1_Printf("get_context_addr registers is %x\n", get_context_addr->registers[0]);
-*/
-	Uart1_Printf("/===============================/\n");
+	// TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000
+	CoSetTTBase((next_pcb_addr->PID ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
 
+	// context 복원 그리고 분기
+	Get_Context_And_Switch();
 }

@@ -19,7 +19,7 @@ const unsigned short * img[]={image0, img101};
 
 void Main(void)
 {
-	Uart_Printf(">>APP0 => LCD Display\n");
+	Uart_Printf(">>APP0 => LCD ss Display\n");
 
 	ArrWinInfo[0].bpp_mode = BPPMODE_16BPP_565;
 	ArrWinInfo[0].bytes_per_pixel = 2;

@@ -263,6 +263,7 @@ CoEnableNeon:
 CoSetTTBase:
                 @/* r0 = base */
                 MCR     p15,0,r0,c2,c0,0
+                isb
                 BX     lr
 
                 .global  CoSelTTBReg0

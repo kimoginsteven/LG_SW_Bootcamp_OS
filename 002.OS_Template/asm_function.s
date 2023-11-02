@@ -131,54 +131,47 @@ Get_CPSR:
 @ context 백업을 위한 코드
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	.extern ptr_PCB_Current
+	.extern Timer0_ISR_context_switch
 	.global Save_Context
 Save_Context:
 
-	@IRQ mode의 r0, r1를 백업
-	push	{r0-r1}
+	@IRQ mode의  백업
+	push	{r0, r14}
 
 	@현재까지 실행되던 app의 pcb 주소 가지고 오기, r13 : pcb의 시작 주소
-	ldr		r0, =ptr_PCB_Current
-	ldr		r0, [r0]
-	ldr 	r0, [r0, #0]
+	ldr		r14, =ptr_PCB_Current
+	ldr		r14, [r14]
+	ldr 	r14, [r14, #0]
 
 	@r0-r14까지 백업하기
-	add		r0, r0, #16
-	STMIA	r0, {r0-r14}^ @user/sys 모드의 register 복원, stmeqia를 안했다
-	sub		r0, r0, #16
+	add		r14, r14, #16
+	stmia	r14, {r0-r14}^ @user/sys 모드의 register 복원, stmeqia를 안했다
+	sub		r14, r14, #16
+
+	mov		r1, r14 //pcb node의 주소를 r1으로 변경, 이제 r1을 마음것 사용해도 됨
+
+	@IRQ mode의  복원
+	pop		{r0, r14} //이제 r14는 복귀할 주소 가르킴
 
 	@현재까지 실행되던 app에서 다음 실행할 명령어의 주소를 pc에 저장
-	sub		r1, lr, #4
-	str		r1, [r0, #8]
+	sub		r0, r14, #4
+	str		r0, [r1, #8]
 
 	@현재까지 실행되던 app의 cpsr 상태 저장하기
-	mrs		r1, spsr
-	str		r1, [r0, #12]
+	mrs		r0, spsr
+	str		r0, [r1, #12]
 
-	@IRQ mode의 r0, r1를 복원
-	pop		{r0-r1}
 
-	bx		lr
+	b		Timer0_ISR_context_switch
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ unsigned int Change_TTBR(unsigned int addr);
-@ TTBR를 바꾸기 위한 코드
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	.global Change_TTBR
-Change_TTBR:
-	mcr		p15, 0, r0, c2, c0, 0
-	mrc		p15, 0, r0, c2, c0, 0
-
-	bx 		lr
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ void Get_Context(void);
+@ void Get_Context_And_Switch(void);
 @ context 복원을 위한 코드
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	.extern ptr_PCB_Current
-	.global Get_Context
-Get_Context:
-	push 	{r14}
+	.global Get_Context_And_Switch
+Get_Context_And_Switch:
+
 	@현재까지 실행되던 app의 pcb 주소 가지고 오기
 	ldr		r14, =ptr_PCB_Current
 	ldr		r14, [r14]
@@ -186,7 +179,7 @@ Get_Context:
 
 	@r0-r14까지 복원
 	add		r14, r14, #16
-	ldmneia	r14, {r0-r14}^ //user/sys 모든 register 저장
+	ldmia	r14, {r0-r14}^ //user,sys 모든 register 저장
 	sub		r14, r14, #16
 
 	@r0를 사용하기 전에 미리 백업
@@ -202,10 +195,29 @@ Get_Context:
 
 	@ 다음 실행할 명령를 pc로 전달
 	add 	r14, r14, #8
-	ldr		r14, [r14]
+	ldr		r14,[r14]
 	movs	pc, r14
 
-	@mov 	r0,r14
-	pop		{r14}
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ unsigned int Get_ASID(void);
+@ 현재 process의 ASID 반환
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	.global Get_ASID
+Get_ASID:
+	mrc		p15, 0, r0, c13, c0, 1
+	and		r0, r0, #0xff
 	bx		lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ void Set_ASID(unsigned int);
+@ 현재 process의 ASID set
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	.global Set_ASID
+Set_ASID:
+	mrc		p15, 0, r1, c13, c0, 1
+	bic		r1, r1, #0xff
+	orr		r1, r1, r0
+	mcr		p15, 0, r1, c13, c0, 1
+	bx		lr
+
 	.end

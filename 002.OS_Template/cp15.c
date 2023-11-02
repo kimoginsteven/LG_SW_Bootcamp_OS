@@ -159,7 +159,7 @@ void SetTransTable(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaS
 	}
 }
 
-void SetTransTable_app2(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr)
+void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr)
 {
 	int i;
 	unsigned int* pTT;
@@ -168,7 +168,7 @@ void SetTransTable_app2(unsigned int uVaStart, unsigned int uVaEnd, unsigned int
 	uPaStart &= ~0xfffff;
 	uVaStart &= ~0xfffff;
 
-	pTT = (unsigned int *)MMU_PAGE_TABLE_BASE+(MMU_PAGE_TABLE_SIZE/2)+(uVaStart>>20);
+	pTT = (unsigned int *)0x44080000+(uVaStart>>20);
 	nNumOfSec = (0x1000+(uVaEnd>>20)-(uVaStart>>20))%0x1000;
 	for(i=0; i<=nNumOfSec; i++)
 	{
@@ -267,9 +267,9 @@ void CoInitMmuAndL1L2Cache(void)
 	CoTTSet_L1L2();
 
 	CoEnableMmu();
-	//L2C_Enable();
-	//CoEnableICache();
-	//CoEnableDCache();
+	L2C_Enable();
+	CoEnableICache();
+	CoEnableDCache();
 	CoEnableBranchPrediction();
 }
 
@@ -339,8 +339,8 @@ static void CoTTSet_L1L2(void)
 	SetTransTable(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
 	SetTransTable(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
 	SetTransTable(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
-	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WBWA);
-	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA);
+	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WBWA); //RW_WBWA
+	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA
 
 	/* Free Memory */
 	SetTransTable(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_NCNB);
@@ -362,4 +362,35 @@ static void CoTTSet_L1L2(void)
 
 	CoSetTTBase(MMU_PAGE_TABLE_BASE|(1<<6)|(1<<3)|(0<<1)|(0<<0));
 	CoSetDomain(0x55555550|(DOMAIN_NO_ACCESS<<2)|(DOMAIN_CLIENT));
+}
+
+void CoTTSet_L1L2_app1(void)
+{
+	SetTransTable_app1(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
+	SetTransTable_app1(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
+	SetTransTable_app1(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
+	SetTransTable_app1(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WBWA); //RW_WBWA
+	SetTransTable_app1(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA
+
+	/* Free Memory */
+	SetTransTable_app1(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_NCNB);
+
+	/* LCD Frame Buffer */
+	SetTransTable_app1(LCD_FB00_START_ADDR, LCD_FB01_START_ADDR-1, LCD_FB00_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB01_START_ADDR, LCD_FB10_START_ADDR-1, LCD_FB01_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB10_START_ADDR, LCD_FB11_START_ADDR-1, LCD_FB10_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB11_START_ADDR, LCD_FB20_START_ADDR-1, LCD_FB11_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB20_START_ADDR, LCD_FB21_START_ADDR-1, LCD_FB20_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB21_START_ADDR, LCD_FB30_START_ADDR-1, LCD_FB21_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB30_START_ADDR, LCD_FB31_START_ADDR-1, LCD_FB30_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB31_START_ADDR, LCD_FB40_START_ADDR-1, LCD_FB31_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB40_START_ADDR, LCD_FB41_START_ADDR-1, LCD_FB40_START_ADDR, RW_WT);
+	SetTransTable_app1(LCD_FB41_START_ADDR, LCD_FB_END_ADDR-1,     LCD_FB41_START_ADDR, RW_WT);
+
+	SetTransTable_app1(LCD_FB_END_ADDR, 0x80000000-1, LCD_FB_END_ADDR, RW_NO_ACCESS);
+	SetTransTable_app1(0x80000000, 0xFFFFFFFF, 0x80000000, RW_NO_ACCESS);
+
+	CoSetTTBase(MMU_PAGE_TABLE_BASE|(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	CoSetDomain(0x55555550|(DOMAIN_NO_ACCESS<<2)|(DOMAIN_CLIENT));
+
 }

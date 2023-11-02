@@ -97,8 +97,11 @@ extern void exynos_smc(unsigned int reg, int val1, int val2, int val3);
 #define NS				(0x0<<19)
 //#define NS				(0x1<<19)
 
+// nG bit for cache
+#define NG_ON			(0x1<<17)
+
 // 1's-Level Translation Table Bit Field Definition
-#define RW_WBWA			(NS|USER_RW|DOMAIN0|WBWA|DT_SECTION)
+#define RW_WBWA			(NS|USER_RW|DOMAIN0|WBWA|DT_SECTION|NG_ON)
 #define RW_WB			(NS|USER_RW|DOMAIN0|WB|DT_SECTION)
 #define RW_WT			(NS|USER_RW|DOMAIN0|WT|DT_SECTION)
 #define RW_NCB			(SS|USER_RW|DOMAIN0|NCB|DT_SECTION)
@@ -194,7 +197,8 @@ void CoLockL2Cache(unsigned int uWayNum);
 void CoUnLockL2Cache(unsigned int uWayNum);
 void CoSetExceptonVectoerBase(unsigned int uBaseAddr);
 void SetTransTable(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
-void SetTransTable_app2(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
+void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
+void CoTTSet_L1L2_app1(void);
 
 /* PA conversion */
 

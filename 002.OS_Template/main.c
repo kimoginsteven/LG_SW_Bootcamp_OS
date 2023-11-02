@@ -1,6 +1,7 @@
 #include "device_driver.h"
 #include "process.h"
 #include "pcb_allocator.h"
+#include "cp15.h"
 
 extern WIN_INFO_ST ArrWinInfo[5];
 
@@ -48,7 +49,6 @@ void Main(void)
 	LED_Init();
 	Key_Poll_Init();
 
-	Timer0_Int_Delay(1, 2000);
 
 	Uart_Printf("\nOS Template\n");
 
@@ -92,20 +92,22 @@ void Main(void)
 	// app 마다 pcb 만들고 linked list 구조체에 넣어주기
 	struct PCB *pcb_app0_addr = (struct PCB *) malloc(sizeof(struct PCB));
 	struct PCB *pcb_app1_addr = (struct PCB *) malloc(sizeof(struct PCB));
-	Uart_Printf("\n app0 pcb_addr: %X\n", pcb_app0_addr);
-	Uart_Printf("\n app1 pcb_addr: %X\n", pcb_app1_addr);
 
 	// app0의 PCB 초기화
-	pcb_app0_addr->PID = 0;
+	pcb_app0_addr->PID = 0x0;
+	pcb_app0_addr->ASID = 0x0;
+	pcb_app1_addr->CPSR = Get_CPSR(); // 이미 T bit는 0
+	pcb_app0_addr->CPSR |= 0x1F; //sys mode로 강제 변환
+	pcb_app0_addr->registers[13] = STACK_BASE_APP0;
+	pcb_app0_addr->PC = RAM_APP0;
 
 	// app1의 PCB 초기화
-	pcb_app1_addr->PID = 1;
-	pcb_app1_addr->CPSR = Get_CPSR(); //이미 T bit는 0
+	pcb_app1_addr->PID = 0x1;
+	pcb_app0_addr->ASID = 0x1;
+	pcb_app1_addr->CPSR = Get_CPSR(); // 이미 T bit는 0
 	pcb_app1_addr->CPSR |= 0x1F; //sys mode로 강제 변환
-	pcb_app1_addr->registers[0] = 123;
-	Uart_Printf("app1 cpsr: %X\n", pcb_app1_addr->CPSR);
-	pcb_app1_addr->PC = RAM_APP0; //VA 영역
-	Uart_Printf("app1 PC: %X\n", pcb_app1_addr->PC);
+	pcb_app1_addr->registers[13] = STACK_BASE_APP1;
+	pcb_app1_addr->PC = RAM_APP0; // VA 영역
 
 	// pcb linked list 구조체 생성된 pcb의 주소값 넣어주기
 	add_pcb((PCB_ADR) pcb_app0_addr);
@@ -113,14 +115,12 @@ void Main(void)
 
 	for(;;)
 	{
+		/*
 		unsigned char x;
 
-		// Uart_Printf("\n실행할 APP을 선택하시오 [1]APP0, [2]APP1 >> ");
-		// x = Uart1_Get_Char();
-		//app0을 먼저 실행
-		Uart_Printf("app0 부터 실행합니다\n");
-		x = '1';
-		/*
+		Uart_Printf("\n실행할 APP을 선택하시오 [1]APP0, [2]APP1 >> ");
+		x = Uart1_Get_Char();
+
 		if(x == '1')
 		{
 			Uart_Printf("\nAPP0 RUN\n", x);
@@ -143,12 +143,16 @@ void Main(void)
 			Run_App(RAM_APP0, STACK_BASE_APP1);
 		}
 		*/
-		Uart_Printf("\nAPP0 RUN\n", x);
+		Uart_Printf("\nAPP0 RUN\n");
 		SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
 		SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
-		SetTransTable_app2(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
-		SetTransTable(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
+
+		// make new transition table
+		CoTTSet_L1L2_app1();
+		SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
+		SetTransTable_app1(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 		CoInvalidateMainTlb();
+		Timer0_Int_Delay(1, 200);
 		Run_App(RAM_APP0, STACK_BASE_APP0);
 
 	}
