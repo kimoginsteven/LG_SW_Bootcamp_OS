@@ -18,7 +18,6 @@ const unsigned short * img[]={image0, img101};
 void Main(void)
 {
 	Lcd_Clr_Screen();
-
 	for(;;)
 	{
 		Lcd_Draw_BMP(0,0,img[0]);

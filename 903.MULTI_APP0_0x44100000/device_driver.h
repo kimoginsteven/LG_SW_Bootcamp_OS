@@ -23,6 +23,9 @@ extern void Uart1_Printf(const char *fmt,...);
 extern char Uart1_Get_Char(void);
 extern char Uart1_Get_Pressed(void);
 extern int Uart1_GetIntNum(void);
+extern void Print_Hello(void);
+extern int Sqr(int a);
+extern long long Long_Long_Add(long long a, long long b);
 
 // key.c
 extern int Key_Get_Key_Pressed(void);

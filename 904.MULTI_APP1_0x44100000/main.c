@@ -6,6 +6,12 @@ void Main(void)
 {
 	Uart_Printf(">>APP1 => UART Print, RO-BASE = 0x44100000 \n");
 
+	//For Test & Demo
+	Print_Hello();
+	Uart_Printf("test Sqr func : %d\n", Sqr(122));
+	Uart_Printf("test longlong func : %lld\n", Long_Long_Add((long long)200000000000, (long long)200000000000));
+
+
 	for(;;)
 	{
 		Uart_Printf("1\n");

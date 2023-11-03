@@ -38,3 +38,18 @@ Key_Wait_Key_Released:
 Key_Wait_Key_Pressed:
 	svc		6
 	bx		lr
+
+	.global Print_Hello
+Print_Hello:
+	svc		7
+	bx		lr
+
+	.global Sqr
+Sqr:
+	svc		8
+	bx		lr
+
+	.global Long_Long_Add
+Long_Long_Add:
+	svc		9
+	bx		lr

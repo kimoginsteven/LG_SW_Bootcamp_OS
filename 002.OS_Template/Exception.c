@@ -311,6 +311,27 @@ void Timer0_ISR_context_switch(void)
 	Get_Context_And_Switch();
 }
 
+// SVC System Call Test를 위한 함수
+
+void Print_Hello(void)
+{
+	Uart_Printf("SVC0 Service...\n");
+	Uart_Printf("Hello\n");
+}
+
+int Sqr(int a)
+{
+	Uart_Printf("SVC1 Service...\n");
+	return a * a;
+}
+
+long long Long_Long_Add(long long a, long long b)
+{
+	Uart_Printf("SVC2 Service...\n");
+	return a + b;
+}
+
+
 void *SVC_Handler_Vector[] =
 {
 		(void *) Lcd_Clr_Screen,        // 0
@@ -319,6 +340,9 @@ void *SVC_Handler_Vector[] =
 		(void *) LED_Display,		    // 3
 		(void *) Key_Get_Key_Pressed,   // 4
 		(void *) Key_Wait_Key_Released, // 5
-		(void *) Key_Wait_Key_Pressed   // 6
+		(void *) Key_Wait_Key_Pressed,  // 6
+		(void *) Print_Hello,           // 7
+		(void *) Sqr,					// 8
+		(void *) Long_Long_Add			// 9
 };
 
