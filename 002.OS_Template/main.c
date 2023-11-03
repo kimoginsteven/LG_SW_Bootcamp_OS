@@ -49,7 +49,6 @@ void Main(void)
 	LED_Init();
 	Key_Poll_Init();
 
-
 	Uart_Printf("\nOS Template\n");
 
 	ArrWinInfo[0].bpp_mode = BPPMODE_16BPP_565;
@@ -89,73 +88,24 @@ void Main(void)
 	}
 #endif
 
-	// app 마다 pcb 만들고 linked list 구조체에 넣어주기
-	struct PCB *pcb_app0_addr = (struct PCB *) malloc(sizeof(struct PCB));
-	struct PCB *pcb_app1_addr = (struct PCB *) malloc(sizeof(struct PCB));
-
-	// app0의 PCB 초기화
-	pcb_app0_addr->PID = 0x0;
-	pcb_app0_addr->ASID = 0x0;
-	pcb_app1_addr->CPSR = Get_CPSR(); // 이미 T bit는 0
-	pcb_app0_addr->CPSR |= 0x1F; //sys mode로 강제 변환
-	pcb_app0_addr->registers[13] = STACK_BASE_APP0;
-	pcb_app0_addr->PC = RAM_APP0;
-
-	// app1의 PCB 초기화
-	pcb_app1_addr->PID = 0x1;
-	pcb_app0_addr->ASID = 0x1;
-	pcb_app1_addr->CPSR = Get_CPSR(); // 이미 T bit는 0
-	pcb_app1_addr->CPSR |= 0x1F; //sys mode로 강제 변환
-	pcb_app1_addr->registers[13] = STACK_BASE_APP1;
-	pcb_app1_addr->PC = RAM_APP0; // VA 영역
-
-	// pcb linked list 구조체 생성된 pcb의 주소값 넣어주기
-	add_pcb((PCB_ADR) pcb_app0_addr);
-	add_pcb((PCB_ADR) pcb_app1_addr);
+	// PCB 할당, 초기화 그리고 linked list에 넣어주기
+	pcb_malloc();
+	pcb_init(RAM_APP0, STACK_BASE_APP0, STACK_BASE_APP1);
+	pcb_add_to_list();
 
 	for(;;)
 	{
-		/*
-		unsigned char x;
-
-		Uart_Printf("\n실행할 APP을 선택하시오 [1]APP0, [2]APP1 >> ");
-		x = Uart1_Get_Char();
-
-		if(x == '1')
-		{
-			Uart_Printf("\nAPP0 RUN\n", x);
-			SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
-			SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
-			CoInvalidateMainTlb();
-			//struct PCB * pcb_address = (struct PCB *) ptr_PCB_Current->pcb_addr;
-			//Uart_Printf("\n app0 pcb_addr output: %X\n", pcb_address);
-
-			//asid 저장
-			Run_App(RAM_APP0, STACK_BASE_APP0);
-		}
-
-		if(x == '2')
-		{
-			Uart_Printf("\nAPP1 RUN\n", x);
-			SetTransTable_app2(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
-			SetTransTable(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
-			CoInvalidateMainTlb();
-			Run_App(RAM_APP0, STACK_BASE_APP1);
-		}
-		*/
 		Uart_Printf("\nAPP0 RUN\n");
 		SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
 		SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
 
-		// make new transition table
-		CoTTSet_L1L2_app1();
+		CoTTSet_L1L2_app1(); // make new transition table for app1
 		SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
 		SetTransTable_app1(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 		CoInvalidateMainTlb();
-		Timer0_Int_Delay(1, 50);
-		Run_App(RAM_APP0, STACK_BASE_APP0);
 
+		Timer0_Int_Delay(1, 20); // IRQ Interrupt 실행
+		Run_App(RAM_APP0, STACK_BASE_APP0); //App0부터 실행 시작
 	}
-	free(pcb_app0_addr);
-	free(pcb_app1_addr);
+	pcb_free();
 }

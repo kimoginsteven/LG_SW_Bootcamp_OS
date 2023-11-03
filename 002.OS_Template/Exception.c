@@ -274,14 +274,16 @@ void Timer0_ISR_context_switch(void)
 	Uart1_Printf("PCB_register1 is %x\n",cur_pcb_addr->registers[1]);
 	Uart1_Printf("PCB_register14 is %x\n",cur_pcb_addr->registers[14]);
 	 */
-	static int value = 0;
 
 	rTINT_CSTAT |= ((1<<5)|1);
 	GIC_Clear_Pending_Clear(0,69);
 	GIC_Write_EOI(0, 69);
 
+	/* LED Toggling
+	static int value = 0;
 	LED_Display(value);
 	value = (value + 1) % 4;
+	 */
 
 	// 다음 앱의 PCB 주소 전환
 	struct PCB *next_pcb_addr = (struct PCB *) get_next_pcb_adr();
