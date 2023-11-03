@@ -308,3 +308,15 @@ void Timer0_ISR_context_switch(void)
 	// context 복원 그리고 분기
 	Get_Context_And_Switch();
 }
+
+void *SVC_Handler_Vector[] =
+{
+		(void *) Lcd_Clr_Screen,        // 0
+		(void *) Lcd_Draw_BMP,		    // 1
+		(void *) Uart_Printf,		    // 2
+		(void *) LED_Display,		    // 3
+		(void *) Key_Get_Key_Pressed,   // 4
+		(void *) Key_Wait_Key_Released, // 5
+		(void *) Key_Wait_Key_Pressed   // 6
+};
+

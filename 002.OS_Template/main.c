@@ -152,7 +152,7 @@ void Main(void)
 		SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
 		SetTransTable_app1(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 		CoInvalidateMainTlb();
-		Timer0_Int_Delay(1, 200);
+		Timer0_Int_Delay(1, 50);
 		Run_App(RAM_APP0, STACK_BASE_APP0);
 
 	}

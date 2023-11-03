@@ -56,7 +56,7 @@ HandlerUndef:
 	ldmfd	sp!,{r0-r3, r12, lr}
 	subs	pc, lr, #4
 
-@ ½ÇÇèÀ» À§ÇÏ¿© ¹®Á¦°¡ ¹ß»ýÇÑ ´ÙÀ½ ÁÖ¼Ò·Î º¹±ÍÇÏµµ·Ï ¼öÁ¤ @
+@ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼Ò·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ @
 
 HandlerDabort:
 	stmfd	sp!,{r0-r3, r12, lr}
@@ -77,13 +77,19 @@ HandlerPabort:
 	ldmfd	sp!,{r0-r3, r12, lr}
 	subs	pc, lr, #4
 
+    .extern SVC_Handler_Vector
 HandlerSVC:
-	stmfd	sp!,{r0-r3, r12, lr}
-	sub 	r0, lr, #4
-	mrs		r1, spsr
-	and		r1, r1, #0x1f
-	bl		SVC_Handler
-	ldmfd	sp!,{r0-r3, r12, pc}^
+	push	{r4-r6, lr}
+	ldr		r4, [lr, #-4]
+	ldr		r5, =SVC_Handler_Vector
+	bic		r4, r4, #0xFF << 24 @get svc í˜¸ì¶œ ë²ˆí˜¸
+	cps		#0x1f
+	mov		r6, lr	@user sys modeì˜ lr ë°±ì—…
+	ldr		r5, [r5, r4, lsl #2] @SVC_Handler_vectorì•ˆì— í•¨ìˆ˜ ì‹¤í–‰
+	blx 	r5
+	mov		lr, r6 @user sys modeì˜ lr ë³µì›
+	cps		#0x13
+	ldmfd	sp!, {r4-r6, pc}^
 
 @--------------------------------------------------
 @ Reset Handler Routine
