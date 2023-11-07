@@ -1,6 +1,6 @@
 #include "Device_Driver.h"
 
-#define DELAY	8000
+#define DELAY	2000
 
 void Main(void)
 {

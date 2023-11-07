@@ -182,9 +182,9 @@ void set_second_table_address_App0(void)
 
 	pTT = (unsigned int *) 0x44001104; // 시작 주소
 	*pTT++ = 0x44040000 | 0x1; //0x44001104
-	*pTT++ = 0x44040100 | 0x1;//0x440011080
-	*pTT++ = 0x44040200| 0x1;//0x4400110c
-	*pTT = 0x44040300 | 0x1; //0x44001110
+	*pTT++ = 0x44040400 | 0x1;//0x440011080
+	*pTT++ = 0x44040800| 0x1;//0x4400110c
+	*pTT = 0x44040c00 | 0x1; //0x44001110
 }
 void set_second_table_address_App1(void)
 {
@@ -192,9 +192,9 @@ void set_second_table_address_App1(void)
 
 	pTT = (unsigned int *) 0x44081104; // 시작 주소
 	*pTT++ = 0x440c0000 | 0x1; //0x44081104
-	*pTT++ = 0x440c0100 | 0x1;//0x44081108
-	*pTT++ = 0x440c0200| 0x1;//0x4408110c
-	*pTT = 0x440c0300 | 0x1; //0x44081110
+	*pTT++ = 0x440c0400 | 0x1;//0x44081108
+	*pTT++ = 0x440c0800| 0x1;//0x4408110c
+	*pTT = 0x440c0c00 | 0x1; //0x44081110
 }
 
 void init_second_table_descriptor_App0(void)
@@ -207,19 +207,19 @@ void init_second_table_descriptor_App0(void)
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x100) ; //section2
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x400) ; //section2
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x200); //section3
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x300); //section4
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
@@ -237,19 +237,19 @@ void init_second_table_descriptor_App1(void)
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x100); //section2
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x400); //section2
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x200); //section3
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x300); //section4
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
