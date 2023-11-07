@@ -57,13 +57,12 @@ void demand_paging (unsigned int fault_addr)
 		for (i=0; i<10; i++)
 			Uart_Printf("[test], addr, value : 0x%X, 0x%X\n",fault_addr + (i*4), *((unsigned int *)fault_addr + i));
 		Uart_Printf("-\n");
-
 		memcpy((void *)physical_address, (void *)(fault_addr >> 12 << 12), 0x1000); //swap file에서 물리 메모리로 적재
 		for (i=0; i<10; i++)
 			Uart_Printf("test : 0x%X\n", *((unsigned int *)physical_address + i));
 		Uart_Printf("-\n");
 
-
+		CoInvalidateMainTlb();
 		// mmu 번역 정보 업데이트: 2차 page table로 가도록 수정
 		*fst_TT_descriptor = snd_page_table_base;
 		*fst_TT_descriptor |= 0x1;
@@ -75,8 +74,8 @@ void demand_paging (unsigned int fault_addr)
 		Uart_Printf("2nd page table index:  0x%X\n", snd_page_table_index);
 		Uart_Printf("New 2nd page table address before change 0x%X\n", pTT);
 		Uart_Printf("New page table descriptor before change0x%X\n", *pTT);
-		*pTT |= physical_address;
-		*pTT |= 0x3 << 4; //access bit 접근가능하도록 바꿔주기
+		*pTT = physical_address;
+		*pTT |= (0x3 << 4) | 0x2; //access bit 접근가능하도록 바꿔주기
 		Uart_Printf("New 2nd page table address after change0x%X\n", pTT);
 		Uart_Printf("New page table descriptor after change0x%X\n", *pTT);
 

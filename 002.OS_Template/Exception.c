@@ -55,6 +55,7 @@ void SVC_Handler(unsigned int addr, unsigned int mode)
 void Page_Fault_Handler_DABT(unsigned int addr)
 {
 	Uart_Printf("page fault exception [DABT] @[0x%X]\n", addr);
+	CoInvalidateMainTlb();
 	demand_paging(addr);
 	//for(;;);
 }
@@ -62,6 +63,7 @@ void Page_Fault_Handler_DABT(unsigned int addr)
 void Page_Fault_Handler_PABT(unsigned int addr)
 {
 	Uart_Printf("page fault exception [PABT] @[0x%X]\n", addr);
+	CoInvalidateMainTlb();
 	demand_paging(addr);
 }
 
