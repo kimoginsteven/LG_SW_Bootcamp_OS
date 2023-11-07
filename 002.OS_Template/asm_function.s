@@ -206,6 +206,7 @@ Get_Context_And_Switch:
 Get_ASID:
 	mrc		p15, 0, r0, c13, c0, 1
 	and		r0, r0, #0xff
+	isb
 	bx		lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -218,6 +219,11 @@ Set_ASID:
 	bic		r1, r1, #0xff
 	orr		r1, r1, r0
 	mcr		p15, 0, r1, c13, c0, 1
+	isb
 	bx		lr
 
+	.global call_isb
+call_isb:
+	isb
+	bx		lr
 	.end

@@ -176,27 +176,6 @@ void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int
 	}
 }
 
-
-/*
-void map_VA_to_fst_table_App0(unsigned int uVaStart, unsigned int uVaEnd)
-{
-
-	unsigned int* pTT;
-
-	uVaStart &= ~0xfffff;
-
-	pTT = (unsigned int *)MMU_PAGE_TABLE_BASE+(uVaStart>>20);
-
-
-
-	// 상위 12 bit가 441 --> 0x44000000,
-
-}
-*/
-
-
-//2차 table 생성을 위한 코드
-
 void set_second_table_address_App0(void)
 {
 	unsigned int* pTT;
@@ -206,6 +185,16 @@ void set_second_table_address_App0(void)
 	*pTT++ = 0x44040100 | 0x1;//0x440011080
 	*pTT++ = 0x44040200| 0x1;//0x4400110c
 	*pTT = 0x44040300 | 0x1; //0x44001110
+}
+void set_second_table_address_App1(void)
+{
+	unsigned int* pTT;
+
+	pTT = (unsigned int *) 0x44081104; // 시작 주소
+	*pTT++ = 0x440c0000 | 0x1; //0x44081104
+	*pTT++ = 0x440c0100 | 0x1;//0x44081108
+	*pTT++ = 0x440c0200| 0x1;//0x4408110c
+	*pTT = 0x440c0300 | 0x1; //0x44081110
 }
 
 void init_second_table_descriptor_App0(void)
@@ -218,25 +207,54 @@ void init_second_table_descriptor_App0(void)
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x100; //section2
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x100) ; //section2
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x200; //section3
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x200); //section3
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 
-	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x300; //section4
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x300); //section4
 	for (i=0; i<256; i++)
 	{
 		*pTT++ = 0x2;
 	}
 }
 
+
+void init_second_table_descriptor_App1(void)
+{
+	unsigned int* pTT;
+	int i;
+	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP1; //section1
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x100); //section2
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x200); //section3
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x300); //section4
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+}
 
 static void CoTTSet_L1(void);
 static void CoTTSet_L1L2(void);

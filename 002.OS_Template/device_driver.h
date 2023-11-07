@@ -51,6 +51,7 @@ extern void Save_Context(void);
 extern void Get_Context_And_Switch(void);
 extern unsigned int Get_ASID(void);
 extern void Set_ASID(unsigned int);
+extern void call_isb(void);
 
 //timer
 extern void Timer0_Delay(int mtime);

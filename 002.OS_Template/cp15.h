@@ -201,6 +201,8 @@ void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int
 void CoTTSet_L1L2_app1(void);
 void set_second_table_address_App0(void);
 void init_second_table_descriptor_App0(void);
+void set_second_table_address_App1(void);
+void init_second_table_descriptor_App1(void);
 
 /* PA conversion */
 

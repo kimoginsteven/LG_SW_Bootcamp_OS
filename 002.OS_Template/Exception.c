@@ -295,7 +295,7 @@ void Timer0_ISR_context_switch(void)
 	rTINT_CSTAT |= ((1<<5)|1);
 	GIC_Clear_Pending_Clear(0,69);
 	GIC_Write_EOI(0, 69);
-
+	Uart_Printf("======CONTEXT SWITCH===========\n");
 	/* LED Toggling
 	static int value = 0;
 	LED_Display(value);
@@ -304,9 +304,9 @@ void Timer0_ISR_context_switch(void)
 
 	// 다음 앱의 PCB 주소 전환
 	struct PCB *next_pcb_addr = (struct PCB *) get_next_pcb_adr();
-
 	// Cache를 위한 ASID 설정
-	Set_ASID(next_pcb_addr->ASID);
+	unsigned int asid = Get_ASID();
+	Set_ASID(asid == 1 ? 0 : 1);
 
 	/* For Debug
 	unsigned int asid = Get_ASID();
@@ -322,7 +322,7 @@ void Timer0_ISR_context_switch(void)
 	*/
 
 	// TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000
-	CoSetTTBase((next_pcb_addr->PID ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
 
 	// context 복원 그리고 분기
 	Get_Context_And_Switch();
