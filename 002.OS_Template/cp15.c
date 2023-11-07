@@ -176,6 +176,68 @@ void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int
 	}
 }
 
+
+/*
+void map_VA_to_fst_table_App0(unsigned int uVaStart, unsigned int uVaEnd)
+{
+
+	unsigned int* pTT;
+
+	uVaStart &= ~0xfffff;
+
+	pTT = (unsigned int *)MMU_PAGE_TABLE_BASE+(uVaStart>>20);
+
+
+
+	// 상위 12 bit가 441 --> 0x44000000,
+
+}
+*/
+
+
+//2차 table 생성을 위한 코드
+
+void set_second_table_address_App0(void)
+{
+	unsigned int* pTT;
+
+	pTT = (unsigned int *) 0x44001104; // 시작 주소
+	*pTT++ = 0x44040000 | 0x1; //0x44001104
+	*pTT++ = 0x44040100 | 0x1;//0x440011080
+	*pTT++ = 0x44040200| 0x1;//0x4400110c
+	*pTT = 0x44040300 | 0x1; //0x44001110
+}
+
+void init_second_table_descriptor_App0(void)
+{
+	unsigned int* pTT;
+	int i;
+	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0; //section1
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x100; //section2
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x200; //section3
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+
+	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0 + 0x300; //section4
+	for (i=0; i<256; i++)
+	{
+		*pTT++ = 0x2;
+	}
+}
+
+
 static void CoTTSet_L1(void);
 static void CoTTSet_L1L2(void);
 
@@ -268,7 +330,7 @@ void CoInitMmuAndL1L2Cache(void)
 
 	CoEnableMmu();
 	L2C_Enable();
-	CoEnableICache();
+	//CoEnableICache();
 	CoEnableDCache();
 	CoEnableBranchPrediction();
 }
@@ -339,8 +401,8 @@ static void CoTTSet_L1L2(void)
 	SetTransTable(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
 	SetTransTable(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
 	SetTransTable(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
-	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WBWA); //RW_WBWA
-	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA
+	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_NCNB); //RW_WBWA
+	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA   ALL_NO_ACCESS
 
 	/* Free Memory */
 	SetTransTable(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_NCNB);
@@ -369,7 +431,7 @@ void CoTTSet_L1L2_app1(void)
 	SetTransTable_app1(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
 	SetTransTable_app1(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
 	SetTransTable_app1(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
-	SetTransTable_app1(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WBWA); //RW_WBWA
+	SetTransTable_app1(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_NCNB); //RW_WBWA
 	SetTransTable_app1(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA
 
 	/* Free Memory */

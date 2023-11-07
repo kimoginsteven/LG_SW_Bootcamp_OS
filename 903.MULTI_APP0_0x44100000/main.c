@@ -17,6 +17,14 @@ const unsigned short * img[]={image0, img101};
 
 void Main(void)
 {
+	Uart_Printf("[app0] test1\n");
+	Uart_Printf("[app0] test2\n");
+	Uart_Printf("[app0] test3\n");
+	Uart_Printf("[app0] test4\n");
+	Uart_Printf("[app0] test5\n");
+	Uart_Printf("[app0] test6\n");
+	Uart_Printf("[app0] test7\n");
+
 	Lcd_Clr_Screen();
 	for(;;)
 	{

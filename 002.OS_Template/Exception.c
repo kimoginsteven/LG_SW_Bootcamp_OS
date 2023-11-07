@@ -2,6 +2,7 @@
 #include "process.h"
 #include "pcb_allocator.h"
 #include "cp15.h"
+#include "page.h"
 
 void Undef_Handler(unsigned int addr, unsigned int mode)
 {
@@ -25,7 +26,7 @@ void Dabort_Handler(unsigned int addr, unsigned int mode)
 	r += (s << 4);
 	Uart_Printf("Reason[0x%X]\nDomain[0x%X]\nRead(0)/Write(1)[%d]\nAXI-Decode(0)/Slave(1)[%d]\n", r, d, w, sd);
 
-#if 0
+#if 1
 	for(;;); /* 실험을 위하여 다음 주소로 복귀하도록 핸들러를 설계 */
 #endif
 }
@@ -50,6 +51,20 @@ void SVC_Handler(unsigned int addr, unsigned int mode)
 	Uart_Printf("SVC-Exception @[0x%X]\nMode[0x%X]\n", addr, mode);
 	Uart_Printf("SVC-ID[%u]\n", Macro_Extract_Area(*(unsigned int *)addr, 0xffffff, 0));
 }
+
+void Page_Fault_Handler_DABT(unsigned int addr)
+{
+	Uart_Printf("page fault exception [DABT] @[0x%X]\n", addr);
+	demand_paging(addr);
+	//for(;;);
+}
+
+void Page_Fault_Handler_PABT(unsigned int addr)
+{
+	Uart_Printf("page fault exception [PABT] @[0x%X]\n", addr);
+	demand_paging(addr);
+}
+
 
 void Invalid_ISR(void)	__attribute__ ((interrupt ("IRQ")));
 void Uart1_ISR(void)	__attribute__ ((interrupt ("IRQ")));

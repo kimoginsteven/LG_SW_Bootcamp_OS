@@ -60,6 +60,13 @@ HandlerUndef:
 
 HandlerDabort:
 	stmfd	sp!,{r0-r3, r12, lr}
+
+	mrc 	p15, 0, r0, c5, c0, 0  @r0에 dfsr 저장하기
+	ldr		r1, =0x140f
+	and		r0, r0, r1
+	cmp		r0, #0xf  @permission fault, page인지 확인
+	beq		1f
+
 	sub 	r0, lr, #8
 	mrs		r1, spsr
 	and		r1, r1, #0x1f
@@ -68,14 +75,37 @@ HandlerDabort:
 	@subs	pc, lr, #8
 	subs	pc, lr, #4
 
+1:
+	mrc		p15, 0, r0, c6, c0, 0 @인자로 permission fault page 주소 전달
+	blx		Page_Fault_Handler_DABT
+	ldmfd	sp!, {r0-r3, r12, lr}
+	subs	pc, lr, #8	@발생한 주소로 다시 복귀
+
 HandlerPabort:
 	stmfd	sp!,{r0-r3, r12, lr}
+
+	mrc		p15, 0, r0, c5, c0, 1  @r0에 ifsr 저장하기
+	ldr		r1, =0x140f
+	and		r0, r0, r1
+	cmp		r0, #0xf  @permission fault, page인지 확인
+	beq		2f
+
 	sub 	r0, lr, #4
 	mrs		r1, spsr
 	and		r1, r1, #0x1f
 	bl		Pabort_Handler
 	ldmfd	sp!,{r0-r3, r12, lr}
 	subs	pc, lr, #4
+
+2:
+	mrc		p15, 0, r0, c6, c0, 2 @인자로 permission fault page 주소 전달
+	blx		Page_Fault_Handler_PABT
+	ldmfd	sp!, {r0-r3, r12, lr}
+	subs	pc, lr, #4	@발생한 주소로 다시 복귀
+	@sub		lr, lr, #4
+	@push 	{r0, lr}
+	@ldmfd	sp!, {r0, pc}^
+	@subs	pc, lr, #4	@발생한 주소로 다시 복귀
 
     .extern SVC_Handler_Vector
 HandlerSVC:

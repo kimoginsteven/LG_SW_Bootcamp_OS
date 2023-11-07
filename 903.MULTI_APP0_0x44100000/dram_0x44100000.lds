@@ -12,14 +12,14 @@ SECTIONS
 {
 	.text :
 	{
+		__RO_BASE__ = .;
 		crt0.o(.text)
 		*(.text)
     		. = ALIGN(4); 
 	} > REGION_TEXT
 	
 	.rodata :
-	{
-		__RO_BASE__ = .;	
+	{	
 		*(.rodata)
    		*(.rodata.*)			
    		. = ALIGN(4); 

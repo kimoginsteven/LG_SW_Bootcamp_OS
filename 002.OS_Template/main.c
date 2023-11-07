@@ -96,15 +96,21 @@ void Main(void)
 	for(;;)
 	{
 		Uart_Printf("\nAPP0 RUN\n");
-		SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
+		//SetTransTable(RAM_APP0, (RAM_APP0+SIZE_APP0-1), RAM_APP0, RW_WBWA);
 		SetTransTable(STACK_LIMIT_APP0, STACK_BASE_APP1-1, STACK_LIMIT_APP0, RW_WBWA);
+		set_second_table_address_App0();
+		init_second_table_descriptor_App0();
 
 		CoTTSet_L1L2_app1(); // make new transition table for app1
-		SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
+		//SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
 		SetTransTable_app1(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 		CoInvalidateMainTlb();
 
-		Timer0_Int_Delay(1, 20); // IRQ Interrupt 실행
+
+
+		//Timer0_Int_Delay(1, 20); // IRQ Interrupt 실행
+		memset((void *)0x44b00000, 0, 0x1000004);  //padding 공간으로 4를 추가로 줌
+		Set_ASID(0); //App0 asid 0으로 설정
 		Run_App(RAM_APP0, STACK_BASE_APP0); //App0부터 실행 시작
 	}
 	pcb_free();

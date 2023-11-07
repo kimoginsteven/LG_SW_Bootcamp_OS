@@ -199,6 +199,8 @@ void CoSetExceptonVectoerBase(unsigned int uBaseAddr);
 void SetTransTable(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
 void SetTransTable_app1(unsigned int uVaStart, unsigned int uVaEnd, unsigned int uPaStart, unsigned int attr);
 void CoTTSet_L1L2_app1(void);
+void set_second_table_address_App0(void);
+void init_second_table_descriptor_App0(void);
 
 /* PA conversion */
 
