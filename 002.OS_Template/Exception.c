@@ -302,9 +302,10 @@ void Timer0_ISR_context_switch(void)
 	value = (value + 1) % 4;
 	 */
 
-	// 다음 앱의 PCB 주소 전환
+	/* 다음 앱의 PCB 주소 전환 */
 	get_next_pcb_adr();
-	// Cache를 위한 ASID 설정
+
+	/* Cache를 위한 ASID 설정*/
 	unsigned int asid = Get_ASID();
 	Set_ASID(asid == 1 ? 0 : 1);
 
@@ -321,15 +322,16 @@ void Timer0_ISR_context_switch(void)
 	Uart1_Printf("\n\n\n");
 	*/
 
-	// TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000
-	//CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
-	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+	/* TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000 */
+	// CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //WBWA
+	// CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(1<<3)|(0<<1)|(1<<0)); //WT_WBWA
 	CoInvalidateMainTlb();
 	// context 복원 그리고 분기
 	Get_Context_And_Switch();
 }
 
-// SVC System Call Test를 위한 함수
+/*** SVC System Call Test를 위한 함수  ***/
 
 void Print_Hello(void)
 {
@@ -348,7 +350,6 @@ long long Long_Long_Add(long long a, long long b)
 	Uart_Printf("SVC2 Service...\n");
 	return a + b;
 }
-
 
 void *SVC_Handler_Vector[] =
 {

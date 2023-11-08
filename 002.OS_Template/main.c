@@ -102,7 +102,7 @@ void Main(void)
 		set_second_table_address_App0();
 		init_second_table_descriptor_App0();
 
-		CoTTSet_L1L2_app1(); // make new transition table for app1
+		CoTTSet_L1L2_app1(); // app1의 VA 영역 초기화
 		//SetTransTable_app1(RAM_APP0, (RAM_APP0+SIZE_APP1-1), RAM_APP1, RW_WBWA);
 		SetTransTable_app1(STACK_LIMIT_APP1, STACK_BASE_APP1-1, STACK_LIMIT_APP1, RW_WBWA);
 		set_second_table_address_App1();
@@ -110,7 +110,7 @@ void Main(void)
 		CoInvalidateMainTlb();
 
 		Timer0_Int_Delay(1, 50); // IRQ Interrupt 실행
-		Set_ASID(0); //App0 asid 0으로 설정
+		Set_ASID(0); //App0의 asid 0으로 설정
 		Run_App(RAM_APP0, STACK_BASE_APP0); //App0부터 실행 시작
 	}
 	pcb_free();

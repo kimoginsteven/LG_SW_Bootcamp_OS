@@ -51,13 +51,22 @@ void demand_paging (unsigned int fault_addr)
 		*fst_TT_entry |= 3<<10 | 2; // 접근 허용하기 위한 AP bit 수정, 하위 2bit 1,0으로 수정
 		mask = ~(1u << 15);
 		*fst_TT_entry &= mask; //ap bit
-		*fst_TT_entry |= (2<<2); // CB bit 1,0 (WT)
-		mask = ~(7u << 12);
-		*fst_TT_entry &= mask; //TEX 000 설정
-		//CoInvalidateMainTlb();
+
+		//cache 정책 설정: WT
+//		*fst_TT_entry |= WT; // CB bit 1,0 (WT)
+//		mask = ~(7u << 12);
+//		*fst_TT_entry &= mask; //TEX 000 설정
+
+		//cache 정책 설정: WT_WBWA
+		*fst_TT_entry |= WT_WBWA;
+
+		CoInvalidateMainTlb();
 		call_isb();
-		//CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //swap_out 하는 페이지의 asid에 따라 ttbr 설정
-		CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); // WT
+
+		 //swap_out 하는 페이지의 asid에 따라 ttbr 설정
+		//CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //WBWA
+		//CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); // WT
+		CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(1<<3)|(0<<1)|(1<<0)); // WT_WBWA
 		call_isb();
 		memcpy((void *)(swapout_virtual_address >> 12 << 12), (void *)(swapout_physical_address), 0x1000); // swap file로 swap out
 		fst_TT_entry = (unsigned int *)MMU_PAGE_TABLE_BASE + swapout_section_id;
@@ -87,11 +96,18 @@ void demand_paging (unsigned int fault_addr)
 		snd_page_table_index = (swapout_virtual_address % 0x100000)/0x1000;
 		snd_TT_entry = (unsigned int *)snd_page_table_base + snd_page_table_index;
 		*snd_TT_entry = 0x2; //접근 불가능으로 진행
-		*snd_TT_entry |= (2<<2); // cb bit 10 설정
-		mask = ~(7u << 6);
-		*snd_TT_entry &= mask; //tex bit 000
-		//CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(1<<6)|(1<<3)|(0<<1)|(0<<0));
-		CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+
+		//cache 정책 설정: WT
+//		*snd_TT_entry |= WT; // WT 설정
+//		mask = ~(7u << 6);
+//		*snd_TT_entry &= mask; //tex bit 000
+
+		//cache 정책 설정: WT_WBWA
+		*snd_TT_entry|= WT_WBWA_PAGE;
+
+		//CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(1<<6)|(1<<3)|(0<<1)|(0<<0)); //WBWA
+		//CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+		CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(1<<3)|(0<<1)|(1<<0)); // WT_WBWA
 		//CoInvalidateMainTlb();
 	}
 
@@ -115,16 +131,21 @@ void demand_paging (unsigned int fault_addr)
 	*fst_TT_entry |= 3<<10 | 2; // 접근 허용하기 위한 AP bit 수정, 하위 2bit 1,0으로 수정
 	mask = ~(1u << 15);
 	*fst_TT_entry &= mask; // 접근 허용하기 위한 AP bit 수정, 상위 AP bit 0으로 수정
-	*fst_TT_entry |= (2<<2); // CB bit 1,0 (WT)
-	mask = ~(7u << 12);
-	*fst_TT_entry &= mask; //TEX 000 설정
+
+	//cache 정책 설정: WT
+//	*fst_TT_entry |= WT; // WT 설정
+//	mask = ~(7u << 12);
+//	*fst_TT_entry &= mask; //TEX 000 설정
+
+	//cache 정책 설정: WT_WBWA
+	*fst_TT_entry |= WT_WBWA;
 
 	//적재할 물리 메모리 공간 찾기
 	physical_address = (0x44b00000 + (page_counter*0x1000));
 	physical_address >>= 12;
 	physical_address <<= 12;
 
-	//CoInvalidateMainTlb();
+	CoInvalidateMainTlb();
 	call_isb();
 
 	// swap file에 있는 페이지를 메모리에 적재
@@ -159,9 +180,14 @@ void demand_paging (unsigned int fault_addr)
 	mask = ~(1u << 9);  // 9번째 비트를 0으로 만들기 위한 마스크
 	*snd_tt_descriptor &= mask;
 	*snd_tt_descriptor |= (0x3 << 4) | 0x2; //access bit 접근가능하도록 바꿔주기
-	*snd_tt_descriptor |= (2<<2); // cb bit 10 설정
-	mask = ~(7u << 6);
-	*snd_tt_descriptor &= mask; //tex bit 000
+
+	//cache 정책 설정: WT
+//	*snd_tt_descriptor |= WT; // WT 설정
+//	mask = ~(7u << 6);
+//	*snd_tt_descriptor &= mask; //tex bit 000
+
+	//cache 정책 설정: WT_WBWA
+	*snd_tt_descriptor |= WT_WBWA_PAGE;
 
 	//CoInvalidateMainTlb();
 	call_isb();

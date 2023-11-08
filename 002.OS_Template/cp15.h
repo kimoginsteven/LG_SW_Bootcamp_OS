@@ -75,6 +75,8 @@ extern void exynos_smc(unsigned int reg, int val1, int val2, int val3);
 #define WT			(0x2<<2)		/* Write-Through Cached <=> Buffered(ARMv7 : Outer and Inner WT, No Write-Allocate) */
 #define WB			(0x3<<2)		/* Write-Back Cached <=> Buffered(ARMv7 : Outer and Inner WB, No Write-Allocate) */
 #define WBWA		((0x1<<12)|(0x3<<2))
+#define WT_WBWA		((0x5<<12)|(0x1<<3)|(0x0<<2)) //inner cache (L1) is WT, outer cache (L2) is WA
+#define WT_WBWA_PAGE ((0x5<<6)|(0x1<<3)|(0x0<<2))
 
 // Access Permission Bits Definition(When AP[2]=0 in ARMv7)
 #define ALL_NO_ACCESS	(0<<10)	/* Previleged:No, User:No */
@@ -104,6 +106,7 @@ extern void exynos_smc(unsigned int reg, int val1, int val2, int val3);
 #define RW_WBWA			(NS|USER_RW|DOMAIN0|WBWA|DT_SECTION|NG_ON)
 #define RW_WB			(NS|USER_RW|DOMAIN0|WB|DT_SECTION)
 #define RW_WT			(NS|USER_RW|DOMAIN0|WT|DT_SECTION|NG_ON)
+#define RW_WT_WBWA		(NS|USER_RW|DOMAIN0|WT_WBWA|DT_SECTION|NG_ON)
 #define RW_NCB			(SS|USER_RW|DOMAIN0|NCB|DT_SECTION)
 #define RW_NCNB			(SS|USER_RW|DOMAIN0|NCNB|DT_SECTION)
 #define RW_NO_ACCESS	(SS|USER_RW|DOMAIN1|NCNB|DT_SECTION)
