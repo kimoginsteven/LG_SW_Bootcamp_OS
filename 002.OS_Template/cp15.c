@@ -204,25 +204,25 @@ void init_second_table_descriptor_App0(void)
 	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0; //section1
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2); //WT 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x400) ; //section2
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2|(2<<2);
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 }
 
@@ -234,25 +234,25 @@ void init_second_table_descriptor_App1(void)
 	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP1; //section1
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x400); //section2
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2;
+		*pTT++ = 0x2 |(2<<2);
 	}
 }
 
@@ -348,7 +348,7 @@ void CoInitMmuAndL1L2Cache(void)
 
 	CoEnableMmu();
 	L2C_Enable();
-	//CoEnableICache();
+	CoEnableICache();
 	CoEnableDCache();
 	CoEnableBranchPrediction();
 }
@@ -419,11 +419,11 @@ static void CoTTSet_L1L2(void)
 	SetTransTable(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
 	SetTransTable(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
 	SetTransTable(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
-	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_NCNB); //RW_WBWA
-	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA   ALL_NO_ACCESS
+	SetTransTable(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WT); //RW_WBWA
+	SetTransTable(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WT); //RW_WBWA   ALL_NO_ACCESS
 
 	/* Free Memory */
-	SetTransTable(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_NCNB);
+	SetTransTable(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_WT);
 
 	/* LCD Frame Buffer */
 	SetTransTable(LCD_FB00_START_ADDR, LCD_FB01_START_ADDR-1, LCD_FB00_START_ADDR, RW_WT);
@@ -440,7 +440,8 @@ static void CoTTSet_L1L2(void)
 	SetTransTable(LCD_FB_END_ADDR, 0x80000000-1, LCD_FB_END_ADDR, RW_NO_ACCESS);
 	SetTransTable(0x80000000, 0xFFFFFFFF, 0x80000000, RW_NO_ACCESS);
 
-	CoSetTTBase(MMU_PAGE_TABLE_BASE|(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	//CoSetTTBase(MMU_PAGE_TABLE_BASE|(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	CoSetTTBase(MMU_PAGE_TABLE_BASE|(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
 	CoSetDomain(0x55555550|(DOMAIN_NO_ACCESS<<2)|(DOMAIN_CLIENT));
 }
 
@@ -449,11 +450,11 @@ void CoTTSet_L1L2_app1(void)
 	SetTransTable_app1(0x00000000, 0x0CDFFFFF, 0x00000000, RW_NO_ACCESS);
 	SetTransTable_app1(0x0CE00000, 0x13FFFFFF, 0x0CE00000, RW_NCNB);
 	SetTransTable_app1(0x14000000, DRAM_START_ADDR-1, 0x14000000, RW_NO_ACCESS);
-	SetTransTable_app1(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_NCNB); //RW_WBWA
-	SetTransTable_app1(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WBWA); //RW_WBWA
+	SetTransTable_app1(DRAM_START_ADDR, MMU_PAGE_TABLE_BASE-1, DRAM_START_ADDR, RW_WT); //RW_WBWA
+	SetTransTable_app1(MMU_PAGE_TABLE_BASE, MMU_PAGE_TABLE_LIMIT-1, MMU_PAGE_TABLE_BASE, RW_WT); //RW_WBWA
 
 	/* Free Memory */
-	SetTransTable_app1(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_NCNB);
+	SetTransTable_app1(MMU_PAGE_TABLE_LIMIT, LCD_FB00_START_ADDR-1, MMU_PAGE_TABLE_LIMIT, RW_WT);
 
 	/* LCD Frame Buffer */
 	SetTransTable_app1(LCD_FB00_START_ADDR, LCD_FB01_START_ADDR-1, LCD_FB00_START_ADDR, RW_WT);
@@ -469,8 +470,4 @@ void CoTTSet_L1L2_app1(void)
 
 	SetTransTable_app1(LCD_FB_END_ADDR, 0x80000000-1, LCD_FB_END_ADDR, RW_NO_ACCESS);
 	SetTransTable_app1(0x80000000, 0xFFFFFFFF, 0x80000000, RW_NO_ACCESS);
-
-	CoSetTTBase(MMU_PAGE_TABLE_BASE|(1<<6)|(1<<3)|(0<<1)|(0<<0));
-	CoSetDomain(0x55555550|(DOMAIN_NO_ACCESS<<2)|(DOMAIN_CLIENT));
-
 }

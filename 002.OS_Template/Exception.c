@@ -56,6 +56,7 @@ void Page_Fault_Handler_DABT(unsigned int addr)
 {
 	//Uart_Printf("page fault exception [DABT] @[0x%X]\n", addr);
 	CoInvalidateMainTlb();
+	call_isb();
 	demand_paging(addr);
 }
 
@@ -63,6 +64,7 @@ void Page_Fault_Handler_PABT(unsigned int addr)
 {
 	//Uart_Printf("page fault exception [PABT] @[0x%X]\n", addr);
 	CoInvalidateMainTlb();
+	call_isb();
 	demand_paging(addr);
 }
 
@@ -320,7 +322,8 @@ void Timer0_ISR_context_switch(void)
 	*/
 
 	// TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000
-	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	//CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0));
+	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
 	CoInvalidateMainTlb();
 	// context 복원 그리고 분기
 	Get_Context_And_Switch();

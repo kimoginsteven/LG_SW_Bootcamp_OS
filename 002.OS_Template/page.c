@@ -11,7 +11,7 @@ unsigned int swap_flag = 0;
 
 void demand_paging (unsigned int fault_addr)
 {
-	CoInvalidateMainTlb();
+	//CoInvalidateMainTlb();
 	unsigned int cur_asid = Get_ASID();
 	unsigned int section_id = fault_addr >> 20;
 	unsigned int mask;
@@ -51,12 +51,15 @@ void demand_paging (unsigned int fault_addr)
 		*fst_TT_entry |= 3<<10 | 2; // 접근 허용하기 위한 AP bit 수정, 하위 2bit 1,0으로 수정
 		mask = ~(1u << 15);
 		*fst_TT_entry &= mask; //ap bit
-		CoInvalidateMainTlb();
+		*fst_TT_entry |= (2<<2); // CB bit 1,0 (WT)
+		mask = ~(7u << 12);
+		*fst_TT_entry &= mask; //TEX 000 설정
+		//CoInvalidateMainTlb();
 		call_isb();
-
-		CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //swap_out 하는 페이지의 asid에 따라 ttbr 설정
+		//CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //swap_out 하는 페이지의 asid에 따라 ttbr 설정
+		CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); // WT
+		call_isb();
 		memcpy((void *)(swapout_virtual_address >> 12 << 12), (void *)(swapout_physical_address), 0x1000); // swap file로 swap out
-
 		fst_TT_entry = (unsigned int *)MMU_PAGE_TABLE_BASE + swapout_section_id;
 
 		//section 별 2차 table로 매핑을 위한 offset 설정
@@ -84,8 +87,12 @@ void demand_paging (unsigned int fault_addr)
 		snd_page_table_index = (swapout_virtual_address % 0x100000)/0x1000;
 		snd_TT_entry = (unsigned int *)snd_page_table_base + snd_page_table_index;
 		*snd_TT_entry = 0x2; //접근 불가능으로 진행
-		CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(1<<6)|(1<<3)|(0<<1)|(0<<0));
-		CoInvalidateMainTlb();
+		*snd_TT_entry |= (2<<2); // cb bit 10 설정
+		mask = ~(7u << 6);
+		*snd_TT_entry &= mask; //tex bit 000
+		//CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(1<<6)|(1<<3)|(0<<1)|(0<<0));
+		CoSetTTBase((cur_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+		//CoInvalidateMainTlb();
 	}
 
 	// 구조체 업데이트
@@ -108,18 +115,20 @@ void demand_paging (unsigned int fault_addr)
 	*fst_TT_entry |= 3<<10 | 2; // 접근 허용하기 위한 AP bit 수정, 하위 2bit 1,0으로 수정
 	mask = ~(1u << 15);
 	*fst_TT_entry &= mask; // 접근 허용하기 위한 AP bit 수정, 상위 AP bit 0으로 수정
+	*fst_TT_entry |= (2<<2); // CB bit 1,0 (WT)
+	mask = ~(7u << 12);
+	*fst_TT_entry &= mask; //TEX 000 설정
 
 	//적재할 물리 메모리 공간 찾기
 	physical_address = (0x44b00000 + (page_counter*0x1000));
 	physical_address >>= 12;
 	physical_address <<= 12;
 
-	CoInvalidateMainTlb();
+	//CoInvalidateMainTlb();
 	call_isb();
 
 	// swap file에 있는 페이지를 메모리에 적재
 	memcpy((void *)physical_address, (void *)(fault_addr >> 12 << 12), 0x1000); //swap file에서 물리 메모리로 적재
-
 	//section 별 2차 table로 매핑을 위한 offset 설정
 	if (section_id == 0x441)
 		snd_table_offset = 0x0;
@@ -150,8 +159,11 @@ void demand_paging (unsigned int fault_addr)
 	mask = ~(1u << 9);  // 9번째 비트를 0으로 만들기 위한 마스크
 	*snd_tt_descriptor &= mask;
 	*snd_tt_descriptor |= (0x3 << 4) | 0x2; //access bit 접근가능하도록 바꿔주기
+	*snd_tt_descriptor |= (2<<2); // cb bit 10 설정
+	mask = ~(7u << 6);
+	*snd_tt_descriptor &= mask; //tex bit 000
 
-	CoInvalidateMainTlb();
+	//CoInvalidateMainTlb();
 	call_isb();
 	page_counter++;
 	if (page_counter >= MAX_PA_PAGE)
