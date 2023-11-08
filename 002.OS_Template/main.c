@@ -47,9 +47,11 @@ void Main(void)
 	CoInitMmuAndL1L2Cache();
 	Uart_Init(115200);
 	LED_Init();
-	Key_Poll_Init();
+	//Key_Poll_Init();
+	Key_ISR_Init();
+	Key_ISR_Enable(1);
 
-	//Uart1_ISR_Enable(1,0,0); // irq exception handler로 분기 --> exception handler에서 Uart1_ISR로 분기
+	Uart1_ISR_Enable(1,0,0); // irq exception handler로 분기 --> exception handler에서 Uart1_ISR로 분기
 	Uart_Printf("\nOS Template\n");
 
 	ArrWinInfo[0].bpp_mode = BPPMODE_16BPP_565;
@@ -106,7 +108,7 @@ void Main(void)
 		init_second_table_descriptor_App1();
 		CoInvalidateMainTlb();
 
-		Timer0_Int_Delay(1, 50); // IRQ Interrupt 실행
+		Timer0_Int_Delay(1, 100); // IRQ Interrupt 실행
 		Set_ASID(0); // App0의 asid 0으로 설정
 		Run_App(RAM_APP0, STACK_BASE_APP0); // App0부터 실행 시작
 	}

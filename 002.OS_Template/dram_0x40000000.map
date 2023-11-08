@@ -5,7 +5,7 @@ C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
                               uart.o (__ctype_ptr__)
 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
-                              pcb_allocator.o (malloc)
+                              irq_queue.o (malloc)
 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
                               C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o) (_malloc_r)
 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
@@ -90,6 +90,7 @@ LOAD Exception.o
 LOAD cp15.o
 LOAD gic.o
 LOAD graphics.o
+LOAD irq_queue.o
 LOAD key.o
 LOAD led.o
 LOAD main.o
@@ -106,704 +107,741 @@ LOAD crt0.o
 LOAD C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a
 LOAD C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a
 
-.text           0x40000000     0xf810
+.text           0x40000000     0xfb70
  crt0.o(.text)
  .text          0x40000000      0x1f8 crt0.o
                 0x40000000                __start
  *(.text)
- .text          0x400001f8      0x544 Exception.o
-                0x400001f8                Invalid_ISR
-                0x40000224                Print_Hello
-                0x40000250                Sqr
-                0x40000274                Long_Long_Add
-                0x400002a8                SDHC_ISR
-                0x400003a0                Uart1_ISR
-                0x400003fc                Key3_ISR
-                0x4000044c                Key4_ISR
-                0x4000049c                Undef_Handler
-                0x400004d4                Dabort_Handler
-                0x40000544                Pabort_Handler
-                0x400005a4                SVC_Handler
-                0x400005e4                Page_Fault_Handler_DABT
-                0x4000060c                Page_Fault_Handler_PABT
-                0x40000634                Timer0_ISR
-                0x400006b0                Timer0_ISR_context_switch
- .text          0x4000073c     0x241c cp15.o
-                0x40000f84                CoGetPAfromVA
-                0x40001004                L2C_Invalidate_VA
-                0x4000108c                L2C_Clean_VA
-                0x40001114                L2C_CleanAndInvalidate_VA
-                0x4000119c                L2C_Enable
-                0x400011f8                L2C_Disable
-                0x40001224                L2C_Invalidate_All
-                0x40001254                L2C_Invalidate_PA
-                0x40001270                L2C_Invalidate_Way
-                0x400012a4                L2C_Clean_All
-                0x400012d4                L2C_Clean_PA
-                0x400012f0                L2C_Clean_SetWay
-                0x40001310                L2C_Clean_Way
-                0x40001344                L2C_CleanAndInvalidate_All
-                0x40001374                L2C_CleanAndInvalidate_PA
-                0x40001390                L2C_CleanAndInvalidate_SetWay
-                0x400013b0                L2C_CleanAndInvalidate_Way
-                0x400013e4                SetTransTable
-                0x40001428                SetTransTable_app1
-                0x40001470                set_second_table_address_App0
-                0x400014ac                set_second_table_address_App1
-                0x400014e8                init_second_table_descriptor_App0
-                0x4000164c                init_second_table_descriptor_App1
-                0x400017b0                CoStopMmuAndL1L2Cache
-                0x40001858                CoStartMmuAndDCache
-                0x40002134                CoInitMmuAndL1L2Cache
-                0x40002214                CoStartMmuAndL1L2Cache
-                0x4000230c                CoTTSet_L1L2_app1
- .text          0x40002b58      0x280 gic.o
-                0x40002b58                GIC_Distributor_Enable
-                0x40002b70                GIC_CPU_Interface_Enable
-                0x40002b84                GIC_Set_Priority_Mask
-                0x40002b9c                GIC_Interrupt_Enable
-                0x40002be8                GIC_Interrupt_Disable
-                0x40002c34                GIC_Set_Interrupt_Priority
-                0x40002cb8                GIC_Set_Processor_Target
-                0x40002d44                GIC_Clear_Pending_Clear
-                0x40002d8c                GIC_Read_INTACK
-                0x40002da8                GIC_Write_EOI
-                0x40002dc0                GIC_Generate_SGI
- .text          0x40002dd8     0x1c34 graphics.o
-                0x4000359c                udelay_f
-                0x400035a0                LCD_Clock_Init
-                0x40003608                Lcd_Init
-                0x400037d0                Lcd_Win_Init
-                0x4000394c                Lcd_Put_Pixel
-                0x4000397c                Lcd_Get_Pixel
-                0x400039a4                Lcd_Get_Pixel_Address
-                0x400039c8                Lcd_Clr_Screen
-                0x40003a50                Lcd_Draw_Back_Color
-                0x40003ad8                Lcd_Get_Info_BMP
-                0x40003aec                Lcd_Draw_BMP
-                0x40003b90                Lcd_Draw_Image
-                0x40003c1c                Lcd_Select_Draw_Frame_Buffer
-                0x40003c44                Lcd_Select_Display_Frame_Buffer
-                0x40003c78                absf
-                0x40003c94                Lcd_Brightness_Control
-                0x40003cb8                Lcd_Draw_BMP_File_24bpp
-                0x40003dfc                Lcd_Han_Putch
-                0x400041c4                Lcd_Eng_Putch
-                0x40004338                Lcd_Puts
-                0x40004554                Lcd_Draw_Bar
-                0x400045d4                Lcd_Draw_Line
-                0x40004788                Lcd_Printf
-                0x400049c0                Lcd_Draw_STACK
- .text          0x40004a0c      0x134 key.o
-                0x40004a0c                Key_Poll_Init
-                0x40004a20                Key_Get_Key_Pressed
-                0x40004a34                Key_Wait_Key_Released
-                0x40004a4c                Key_Wait_Key_Pressed
-                0x40004a68                Key_ISR_Init
-                0x40004a98                Key_ISR_Enable
- .text          0x40004b40       0x40 led.o
-                0x40004b40                LED_Init
-                0x40004b64                LED_Display
- .text          0x40004b80      0x1b8 main.o
-                0x40004b80                App_Read
-                0x40004bcc                Main
- .text          0x40004d38      0x344 page.o
-                0x40004d38                demand_paging
- .text          0x4000507c       0xe8 pcb_allocator.o
-                0x4000507c                allocate_pcb
-                0x400050a8                add_pcb
-                0x40005120                get_current_pcb_adr
-                0x40005134                set_current_pcb_adr
-                0x40005148                get_next_pcb_adr
- .text          0x40005164      0x114 process.o
-                0x40005164                pcb_malloc
-                0x40005194                pcb_init
-                0x40005220                pcb_add_to_list
-                0x4000524c                pcb_free
- .text          0x40005278       0xb4 runtime.o
-                0x40005278                _sbrk
-                0x400052c4                Get_Stack_Base
-                0x400052cc                Get_Stack_Limit
-                0x400052d8                Get_Heap_Base
-                0x400052e8                Get_Heap_Limit
-                0x400052f4                Delay
- .text          0x4000532c      0xcc0 sdhc.o
-                0x4000532c                SDHC_Init
-                0x400053d4                SDHC_Card_Init
-                0x400056e4                SDHC_Port_Init
-                0x40005724                SDHC_Clock_Supply
-                0x40005768                SDHC_Clock_Stop
-                0x40005780                SDHC_CMD0
-                0x400057e0                SDHC_CMD8
-                0x40005848                SDHC_CMD55
-                0x400058a8                SDHC_ACMD41
-                0x40005964                SDHC_CMD2
-                0x400059cc                SDHC_CMD3
-                0x40005a38                SDHC_CMD7
-                0x40005ac0                SDHC_ACMD6_4bit
-                0x40005b80                SDHC_ISR_Enable
-                0x40005c60                SDHC_BusPower_Control
-                0x40005cec                SDHC_Change_Dat_Width_4bit
-                0x40005db8                SD_Read_Sector
-                0x40005ec8                SD_Write_Sector
- .text          0x40005fec      0x13c timer.o
-                0x40005fec                Timer0_Delay
-                0x40006070                Timer0_Int_Delay
- .text          0x40006128      0x630 uart.o
-                0x40006128                Uart1_Init
-                0x400061f8                Uart1_Send_Byte
-                0x4000624c                Uart1_Send_String
-                0x400062b8                Uart1_Printf
-                0x40006350                Uart1_Get_Char
-                0x40006378                Uart1_Get_Pressed
-                0x40006394                Uart1_ISR_Enable
-                0x40006460                Uart1_GetString
-                0x40006558                Uart1_GetIntNum
- .text          0x40006758      0x12c asm_function.o
-                0x40006758                Run_App
-                0x40006774                Get_User_SP
-                0x40006788                Get_User_Stack_Base
-                0x40006790                Get_User_Stack_Limit
-                0x40006798                PABT_Falut_Status
-                0x400067a0                PABT_Falut_Address
-                0x400067a8                DABT_Falut_Status
-                0x400067b0                DABT_Falut_Address
-                0x400067b8                Get_SP
-                0x400067c0                Main_ID
-                0x400067c8                TLB_Type
-                0x400067d0                Get_CPSR
-                0x400067d8                Save_Context
-                0x40006810                Get_Context_And_Switch
-                0x40006848                Get_ASID
-                0x40006858                Set_ASID
-                0x40006870                call_isb
- .text          0x40006884      0x540 cp15a.o
-                0x40006884                exynos_smc
-                0x40006894                CoGetOSReadPA
-                0x400068a4                CoGetOSWritePA
-                0x400068b4                CoGetUserReadPA
-                0x400068c4                CoGetUserWritePA
-                0x400068d4                CoEnableL2PrefetchHint
-                0x400068e4                CoDisableL2PrefetchHint
-                0x400068f4                CoEnableICache
-                0x40006910                CoDisableICache
-                0x4000692c                CoEnableDCache
-                0x4000693c                CoDisableDCache
-                0x4000694c                CoReadCTR
-                0x40006954                CoReadCLIDR
-                0x4000695c                CoReadCCSIDR
-                0x40006964                CoReadCSSELR
-                0x4000696c                CoEnableIrq
-                0x4000697c                CoDisableIrq
-                0x4000698c                CoEnableFiq
-                0x4000699c                CoDisableFiq
-                0x400069ac                CoSetIF
-                0x400069c0                CoWrIF
-                0x400069c8                CoClrIF
-                0x400069d8                CoEnableVectoredInt
-                0x400069e8                CoDisableVectoredInt
-                0x400069f8                CoEnableUnalignedAccess
-                0x40006a08                CoDisableUnalignedAccess
-                0x40006a18                CoEnableAlignFault
-                0x40006a28                CoDisableAlignFault
-                0x40006a38                CoEnableMmu
-                0x40006a48                CoDisableMmu
-                0x40006a58                CoSetFastBusMode
-                0x40006a68                CoSetAsyncBusMode
-                0x40006a78                CoEnableBranchPrediction
-                0x40006a88                CoDisableBranchPrediction
-                0x40006a98                CoEnableVfp
-                0x40006aa8                CoEnableNeon
-                0x40006ab8                CoSetTTBase
-                0x40006ac4                CoSelTTBReg0
-                0x40006ad0                CoSetASID
-                0x40006ad8                CoSetDomain
-                0x40006ae0                CoWaitForInterrupt
-                0x40006aec                CoInvalidateICache
-                0x40006afc                CoInvalidateDCache
-                0x40006b0c                CoInvalidateDCacheVA
-                0x40006b18                CoInvalidateDCacheIndex
-                0x40006b24                CoInvalidateBothCaches
-                0x40006b34                CoCleanDCacheVA
-                0x40006b40                CoCleanDCacheIndex
-                0x40006b4c                CoDataSyncBarrier
-                0x40006b54                CoPrefetchICacheLineVA
-                0x40006b5c                CoCleanAndInvalidateDCacheVA
-                0x40006b68                CoCleanAndInvalidateDCacheIndex
-                0x40006b74                CoInvalidateITlb
-                0x40006b80                CoInvalidateITlbVA
-                0x40006b88                CoInvalidateITlbASID
-                0x40006b90                CoInvalidateDTlb
-                0x40006b9c                CoInvalidateDTlbVA
-                0x40006ba4                CoInvalidateDTlbASID
-                0x40006bac                CoInvalidateMainTlb
-                0x40006bb8                CoInvalidateMainTlbVA
-                0x40006bc0                CoInvalidateMainTlbASID
-                0x40006bcc                CoSetDCacheLockdownBase
-                0x40006bd4                CoSetICacheLockdownBase
-                0x40006bdc                CoLockL2Cache
-                0x40006bec                CoUnLockL2Cache
-                0x40006bfc                CoSetL2CacheAuxCrtlReg
-                0x40006c04                CoSetDTlbLockdown
-                0x40006c0c                CoSetITlbLockdown
-                0x40006c14                CoSetL2CacheLines
-                0x40006c20                CoCopyToL2Cache
-                0x40006c74                CoCopyFromL2Cache
-                0x40006cc0                CoStopPLE
-                0x40006ccc                CoNonSecureAccCtrl
-                0x40006ce0                CoGetCacheSizeID
-                0x40006cec                CoGetPAreg
-                0x40006cf8                CoGetNormalMemRemapReg
-                0x40006d04                CoInvalidateDCacheForV7
-                0x40006d94                CoSetExceptonVectoerBase
-                0x40006d9c                CoSetProcessId
-                0x40006da4                CoSetMpll
- .text          0x40006dc4       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
-                0x40006dc4                atoi
-                0x40006ddc                _atoi_r
- .text          0x40006df4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
- .text          0x40006df4       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
-                0x40006df4                malloc
-                0x40006e14                free
- .text          0x40006e34      0x72c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
-                0x40006e34                _malloc_r
- .text          0x40007560       0xf0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
-                0x40007560                memcpy
- .text          0x40007650        0x8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
-                0x40007650                __malloc_lock
-                0x40007654                __malloc_unlock
- .text          0x40007658       0x44 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
-                0x40007658                _sbrk_r
- .text          0x4000769c       0x60 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
-                0x4000769c                strlen
- .text          0x400076fc      0x1f8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
-                0x400076fc                _strtol_r
-                0x400078cc                strtol
- .text          0x400078f4       0x78 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
-                0x400078f4                _vsprintf_r
-                0x40007944                vsprintf
- .text          0x4000796c      0x36c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
-                0x4000796c                _malloc_trim_r
-                0x40007a6c                _free_r
- .text          0x40007cd8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
- .text          0x40007cd8      0x134 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
-                0x40007cd8                cleanup_glue
-                0x40007d04                _reclaim_reent
- .text          0x40007e0c     0x1f0c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
-                0x40007e0c                _svfprintf_r
- .text          0x40009d18     0x18d8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
-                0x40009ef8                _dtoa_r
- .text          0x4000b5f0       0xd0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
-                0x4000b5f0                _setlocale_r
-                0x4000b660                __locale_charset
-                0x4000b66c                __locale_mb_cur_max
-                0x4000b67c                __locale_msgcharset
-                0x4000b688                __locale_cjk_lang
-                0x4000b690                _localeconv_r
-                0x4000b69c                setlocale
-                0x4000b6b4                localeconv
- .text          0x4000b6c0      0x114 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
-                0x4000b6c0                memchr
- .text          0x4000b7d4      0xd2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
-                0x4000b7d4                _Balloc
-                0x4000b860                _Bfree
-                0x4000b87c                __multadd
-                0x4000b958                __s2b
-                0x4000ba40                __hi0bits
-                0x4000ba9c                __lo0bits
-                0x4000bb30                __i2b
-                0x4000bb54                __multiply
-                0x4000bd3c                __pow5mult
-                0x4000be40                __lshift
-                0x4000bf4c                __mcmp
-                0x4000bfac                __mdiff
-                0x4000c0f0                __ulp
-                0x4000c154                __b2d
-                0x4000c228                __d2b
-                0x4000c334                __ratio
-                0x4000c3bc                _mprec_log10
-                0x4000c414                __copybits
-                0x4000c484                __any_on
- .text          0x4000c500       0x6c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
-                0x4000c500                __fpclassifyd
- .text          0x4000c56c      0x230 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
-                0x4000c56c                strcmp
- .text          0x4000c79c     0x128c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
-                0x4000c79c                __ssprint_r
-                0x4000c948                _svfiprintf_r
- .text          0x4000da28       0x9c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
-                0x4000da28                _calloc_r
- .text          0x4000dac4      0x134 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
-                0x4000dac4                memmove
- .text          0x4000dbf8       0xf4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
-                0x4000dbf8                memset
- .text          0x4000dcec      0x56c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
-                0x4000dcec                _realloc_r
- .text          0x4000e258      0x114 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
-                0x4000e258                __aeabi_uidiv
-                0x4000e258                __udivsi3
-                0x4000e34c                __aeabi_uidivmod
- .text          0x4000e36c        0x4 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
-                0x4000e36c                __aeabi_idiv0
-                0x4000e36c                __aeabi_ldiv0
- .text          0x4000e370      0x41c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
-                0x4000e370                __aeabi_drsub
-                0x4000e378                __aeabi_dsub
-                0x4000e378                __subdf3
-                0x4000e37c                __aeabi_dadd
-                0x4000e37c                __adddf3
-                0x4000e68c                __floatunsidf
-                0x4000e68c                __aeabi_ui2d
-                0x4000e6b0                __floatsidf
-                0x4000e6b0                __aeabi_i2d
-                0x4000e6d8                __aeabi_f2d
-                0x4000e6d8                __extendsfdf2
-                0x4000e718                __floatundidf
-                0x4000e718                __aeabi_ul2d
-                0x4000e72c                __floatdidf
-                0x4000e72c                __aeabi_l2d
- .text          0x4000e78c      0x49c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
-                0x4000e78c                __aeabi_dmul
-                0x4000e78c                __muldf3
-                0x4000ea1c                __divdf3
-                0x4000ea1c                __aeabi_ddiv
- .text          0x4000ec28      0x144 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
-                0x4000ec28                __gtdf2
-                0x4000ec28                __gedf2
-                0x4000ec30                __ltdf2
-                0x4000ec30                __ledf2
-                0x4000ec38                __nedf2
-                0x4000ec38                __eqdf2
-                0x4000ec38                __cmpdf2
-                0x4000ecc0                __aeabi_cdrcmple
-                0x4000ecdc                __aeabi_cdcmpeq
-                0x4000ecdc                __aeabi_cdcmple
-                0x4000ecf4                __aeabi_dcmpeq
-                0x4000ed0c                __aeabi_dcmplt
-                0x4000ed24                __aeabi_dcmple
-                0x4000ed3c                __aeabi_dcmpge
-                0x4000ed54                __aeabi_dcmpgt
- .text          0x4000ed6c       0x5c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
-                0x4000ed6c                __aeabi_d2iz
-                0x4000ed6c                __fixdfsi
- .text          0x4000edc8       0x3c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
-                0x4000edc8                __aeabi_uldivmod
- .text          0x4000ee04       0x84 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
-                0x4000ee04                __gnu_ldivmod_helper
-                0x4000ee48                __gnu_uldivmod_helper
- .text          0x4000ee88      0x4d0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
-                0x4000ee88                __divdi3
- .text          0x4000f358      0x470 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
-                0x4000f358                __udivdi3
- .text          0x4000f7c8       0x48 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
-                0x4000f7c8                __clzsi2
-                0x4000f810                . = ALIGN (0x4)
+ .text          0x400001f8      0x7f4 Exception.o
+                0x400001f8                Send_Uart_Request
+                0x40000210                Send_Key3_Request
+                0x4000022c                Send_Key4_Request
+                0x40000248                Clear_Uart_Request
+                0x40000264                Clear_Key3_Request
+                0x40000280                Clear_Key4_Request
+                0x4000029c                Invalid_ISR
+                0x400002c8                Print_Hello
+                0x400002f4                Sqr
+                0x40000318                Long_Long_Add
+                0x4000034c                SDHC_ISR
+                0x40000444                Uart1_ISR
+                0x400004fc                Key3_ISR
+                0x400005a0                Key4_ISR
+                0x40000644                Get_Uart_Response
+                0x40000694                Get_Key3_Response
+                0x400006e8                Get_Key4_Response
+                0x4000073c                Undef_Handler
+                0x40000774                Dabort_Handler
+                0x400007e4                Pabort_Handler
+                0x40000844                SVC_Handler
+                0x40000884                Page_Fault_Handler_DABT
+                0x400008ac                Page_Fault_Handler_PABT
+                0x400008d4                Timer0_ISR
+                0x40000950                Timer0_ISR_context_switch
+                0x400009dc                Is_Name_Input_Done
+                0x400009e4                Get_Name
+ .text          0x400009ec     0x241c cp15.o
+                0x40001234                CoGetPAfromVA
+                0x400012b4                L2C_Invalidate_VA
+                0x4000133c                L2C_Clean_VA
+                0x400013c4                L2C_CleanAndInvalidate_VA
+                0x4000144c                L2C_Enable
+                0x400014a8                L2C_Disable
+                0x400014d4                L2C_Invalidate_All
+                0x40001504                L2C_Invalidate_PA
+                0x40001520                L2C_Invalidate_Way
+                0x40001554                L2C_Clean_All
+                0x40001584                L2C_Clean_PA
+                0x400015a0                L2C_Clean_SetWay
+                0x400015c0                L2C_Clean_Way
+                0x400015f4                L2C_CleanAndInvalidate_All
+                0x40001624                L2C_CleanAndInvalidate_PA
+                0x40001640                L2C_CleanAndInvalidate_SetWay
+                0x40001660                L2C_CleanAndInvalidate_Way
+                0x40001694                SetTransTable
+                0x400016d8                SetTransTable_app1
+                0x40001720                set_second_table_address_App0
+                0x4000175c                set_second_table_address_App1
+                0x40001798                init_second_table_descriptor_App0
+                0x400018fc                init_second_table_descriptor_App1
+                0x40001a60                CoStopMmuAndL1L2Cache
+                0x40001b08                CoStartMmuAndDCache
+                0x400023e4                CoInitMmuAndL1L2Cache
+                0x400024c4                CoStartMmuAndL1L2Cache
+                0x400025bc                CoTTSet_L1L2_app1
+ .text          0x40002e08      0x280 gic.o
+                0x40002e08                GIC_Distributor_Enable
+                0x40002e20                GIC_CPU_Interface_Enable
+                0x40002e34                GIC_Set_Priority_Mask
+                0x40002e4c                GIC_Interrupt_Enable
+                0x40002e98                GIC_Interrupt_Disable
+                0x40002ee4                GIC_Set_Interrupt_Priority
+                0x40002f68                GIC_Set_Processor_Target
+                0x40002ff4                GIC_Clear_Pending_Clear
+                0x4000303c                GIC_Read_INTACK
+                0x40003058                GIC_Write_EOI
+                0x40003070                GIC_Generate_SGI
+ .text          0x40003088     0x1c34 graphics.o
+                0x4000384c                udelay_f
+                0x40003850                LCD_Clock_Init
+                0x400038b8                Lcd_Init
+                0x40003a80                Lcd_Win_Init
+                0x40003bfc                Lcd_Put_Pixel
+                0x40003c2c                Lcd_Get_Pixel
+                0x40003c54                Lcd_Get_Pixel_Address
+                0x40003c78                Lcd_Clr_Screen
+                0x40003d00                Lcd_Draw_Back_Color
+                0x40003d88                Lcd_Get_Info_BMP
+                0x40003d9c                Lcd_Draw_BMP
+                0x40003e40                Lcd_Draw_Image
+                0x40003ecc                Lcd_Select_Draw_Frame_Buffer
+                0x40003ef4                Lcd_Select_Display_Frame_Buffer
+                0x40003f28                absf
+                0x40003f44                Lcd_Brightness_Control
+                0x40003f68                Lcd_Draw_BMP_File_24bpp
+                0x400040ac                Lcd_Han_Putch
+                0x40004474                Lcd_Eng_Putch
+                0x400045e8                Lcd_Puts
+                0x40004804                Lcd_Draw_Bar
+                0x40004884                Lcd_Draw_Line
+                0x40004a38                Lcd_Printf
+                0x40004c70                Lcd_Draw_STACK
+ .text          0x40004cbc       0xac irq_queue.o
+                0x40004cbc                enqueue
+                0x40004d18                dequeue
+ .text          0x40004d68      0x134 key.o
+                0x40004d68                Key_Poll_Init
+                0x40004d7c                Key_Get_Key_Pressed
+                0x40004d90                Key_Wait_Key_Released
+                0x40004da8                Key_Wait_Key_Pressed
+                0x40004dc4                Key_ISR_Init
+                0x40004df4                Key_ISR_Enable
+ .text          0x40004e9c       0x40 led.o
+                0x40004e9c                LED_Init
+                0x40004ec0                LED_Display
+ .text          0x40004edc      0x1d0 main.o
+                0x40004edc                App_Read
+                0x40004f28                Main
+ .text          0x400050ac      0x32c page.o
+                0x400050ac                demand_paging
+ .text          0x400053d8       0xe8 pcb_allocator.o
+                0x400053d8                allocate_pcb
+                0x40005404                add_pcb
+                0x4000547c                get_current_pcb_adr
+                0x40005490                set_current_pcb_adr
+                0x400054a4                get_next_pcb_adr
+ .text          0x400054c0      0x114 process.o
+                0x400054c0                pcb_malloc
+                0x400054f0                pcb_init
+                0x4000557c                pcb_add_to_list
+                0x400055a8                pcb_free
+ .text          0x400055d4       0xb4 runtime.o
+                0x400055d4                _sbrk
+                0x40005620                Get_Stack_Base
+                0x40005628                Get_Stack_Limit
+                0x40005634                Get_Heap_Base
+                0x40005644                Get_Heap_Limit
+                0x40005650                Delay
+ .text          0x40005688      0xcc0 sdhc.o
+                0x40005688                SDHC_Init
+                0x40005730                SDHC_Card_Init
+                0x40005a40                SDHC_Port_Init
+                0x40005a80                SDHC_Clock_Supply
+                0x40005ac4                SDHC_Clock_Stop
+                0x40005adc                SDHC_CMD0
+                0x40005b3c                SDHC_CMD8
+                0x40005ba4                SDHC_CMD55
+                0x40005c04                SDHC_ACMD41
+                0x40005cc0                SDHC_CMD2
+                0x40005d28                SDHC_CMD3
+                0x40005d94                SDHC_CMD7
+                0x40005e1c                SDHC_ACMD6_4bit
+                0x40005edc                SDHC_ISR_Enable
+                0x40005fbc                SDHC_BusPower_Control
+                0x40006048                SDHC_Change_Dat_Width_4bit
+                0x40006114                SD_Read_Sector
+                0x40006224                SD_Write_Sector
+ .text          0x40006348      0x13c timer.o
+                0x40006348                Timer0_Delay
+                0x400063cc                Timer0_Int_Delay
+ *fill*         0x40006484        0x4 
+ .text          0x40006488      0x630 uart.o
+                0x40006488                Uart1_Init
+                0x40006558                Uart1_Send_Byte
+                0x400065ac                Uart1_Send_String
+                0x40006618                Uart1_Printf
+                0x400066b0                Uart1_Get_Char
+                0x400066d8                Uart1_Get_Pressed
+                0x400066f4                Uart1_ISR_Enable
+                0x400067c0                Uart1_GetString
+                0x400068b8                Uart1_GetIntNum
+ .text          0x40006ab8      0x12c asm_function.o
+                0x40006ab8                Run_App
+                0x40006ad4                Get_User_SP
+                0x40006ae8                Get_User_Stack_Base
+                0x40006af0                Get_User_Stack_Limit
+                0x40006af8                PABT_Falut_Status
+                0x40006b00                PABT_Falut_Address
+                0x40006b08                DABT_Falut_Status
+                0x40006b10                DABT_Falut_Address
+                0x40006b18                Get_SP
+                0x40006b20                Main_ID
+                0x40006b28                TLB_Type
+                0x40006b30                Get_CPSR
+                0x40006b38                Save_Context
+                0x40006b70                Get_Context_And_Switch
+                0x40006ba8                Get_ASID
+                0x40006bb8                Set_ASID
+                0x40006bd0                call_isb
+ .text          0x40006be4      0x540 cp15a.o
+                0x40006be4                exynos_smc
+                0x40006bf4                CoGetOSReadPA
+                0x40006c04                CoGetOSWritePA
+                0x40006c14                CoGetUserReadPA
+                0x40006c24                CoGetUserWritePA
+                0x40006c34                CoEnableL2PrefetchHint
+                0x40006c44                CoDisableL2PrefetchHint
+                0x40006c54                CoEnableICache
+                0x40006c70                CoDisableICache
+                0x40006c8c                CoEnableDCache
+                0x40006c9c                CoDisableDCache
+                0x40006cac                CoReadCTR
+                0x40006cb4                CoReadCLIDR
+                0x40006cbc                CoReadCCSIDR
+                0x40006cc4                CoReadCSSELR
+                0x40006ccc                CoEnableIrq
+                0x40006cdc                CoDisableIrq
+                0x40006cec                CoEnableFiq
+                0x40006cfc                CoDisableFiq
+                0x40006d0c                CoSetIF
+                0x40006d20                CoWrIF
+                0x40006d28                CoClrIF
+                0x40006d38                CoEnableVectoredInt
+                0x40006d48                CoDisableVectoredInt
+                0x40006d58                CoEnableUnalignedAccess
+                0x40006d68                CoDisableUnalignedAccess
+                0x40006d78                CoEnableAlignFault
+                0x40006d88                CoDisableAlignFault
+                0x40006d98                CoEnableMmu
+                0x40006da8                CoDisableMmu
+                0x40006db8                CoSetFastBusMode
+                0x40006dc8                CoSetAsyncBusMode
+                0x40006dd8                CoEnableBranchPrediction
+                0x40006de8                CoDisableBranchPrediction
+                0x40006df8                CoEnableVfp
+                0x40006e08                CoEnableNeon
+                0x40006e18                CoSetTTBase
+                0x40006e24                CoSelTTBReg0
+                0x40006e30                CoSetASID
+                0x40006e38                CoSetDomain
+                0x40006e40                CoWaitForInterrupt
+                0x40006e4c                CoInvalidateICache
+                0x40006e5c                CoInvalidateDCache
+                0x40006e6c                CoInvalidateDCacheVA
+                0x40006e78                CoInvalidateDCacheIndex
+                0x40006e84                CoInvalidateBothCaches
+                0x40006e94                CoCleanDCacheVA
+                0x40006ea0                CoCleanDCacheIndex
+                0x40006eac                CoDataSyncBarrier
+                0x40006eb4                CoPrefetchICacheLineVA
+                0x40006ebc                CoCleanAndInvalidateDCacheVA
+                0x40006ec8                CoCleanAndInvalidateDCacheIndex
+                0x40006ed4                CoInvalidateITlb
+                0x40006ee0                CoInvalidateITlbVA
+                0x40006ee8                CoInvalidateITlbASID
+                0x40006ef0                CoInvalidateDTlb
+                0x40006efc                CoInvalidateDTlbVA
+                0x40006f04                CoInvalidateDTlbASID
+                0x40006f0c                CoInvalidateMainTlb
+                0x40006f18                CoInvalidateMainTlbVA
+                0x40006f20                CoInvalidateMainTlbASID
+                0x40006f2c                CoSetDCacheLockdownBase
+                0x40006f34                CoSetICacheLockdownBase
+                0x40006f3c                CoLockL2Cache
+                0x40006f4c                CoUnLockL2Cache
+                0x40006f5c                CoSetL2CacheAuxCrtlReg
+                0x40006f64                CoSetDTlbLockdown
+                0x40006f6c                CoSetITlbLockdown
+                0x40006f74                CoSetL2CacheLines
+                0x40006f80                CoCopyToL2Cache
+                0x40006fd4                CoCopyFromL2Cache
+                0x40007020                CoStopPLE
+                0x4000702c                CoNonSecureAccCtrl
+                0x40007040                CoGetCacheSizeID
+                0x4000704c                CoGetPAreg
+                0x40007058                CoGetNormalMemRemapReg
+                0x40007064                CoInvalidateDCacheForV7
+                0x400070f4                CoSetExceptonVectoerBase
+                0x400070fc                CoSetProcessId
+                0x40007104                CoSetMpll
+ .text          0x40007124       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
+                0x40007124                atoi
+                0x4000713c                _atoi_r
+ .text          0x40007154        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
+ .text          0x40007154       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
+                0x40007154                malloc
+                0x40007174                free
+ .text          0x40007194      0x72c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
+                0x40007194                _malloc_r
+ .text          0x400078c0       0xf0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
+                0x400078c0                memcpy
+ .text          0x400079b0        0x8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
+                0x400079b0                __malloc_lock
+                0x400079b4                __malloc_unlock
+ .text          0x400079b8       0x44 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
+                0x400079b8                _sbrk_r
+ .text          0x400079fc       0x60 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
+                0x400079fc                strlen
+ .text          0x40007a5c      0x1f8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
+                0x40007a5c                _strtol_r
+                0x40007c2c                strtol
+ .text          0x40007c54       0x78 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
+                0x40007c54                _vsprintf_r
+                0x40007ca4                vsprintf
+ .text          0x40007ccc      0x36c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
+                0x40007ccc                _malloc_trim_r
+                0x40007dcc                _free_r
+ .text          0x40008038        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+ .text          0x40008038      0x134 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+                0x40008038                cleanup_glue
+                0x40008064                _reclaim_reent
+ .text          0x4000816c     0x1f0c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+                0x4000816c                _svfprintf_r
+ .text          0x4000a078     0x18d8 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+                0x4000a258                _dtoa_r
+ .text          0x4000b950       0xd0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+                0x4000b950                _setlocale_r
+                0x4000b9c0                __locale_charset
+                0x4000b9cc                __locale_mb_cur_max
+                0x4000b9dc                __locale_msgcharset
+                0x4000b9e8                __locale_cjk_lang
+                0x4000b9f0                _localeconv_r
+                0x4000b9fc                setlocale
+                0x4000ba14                localeconv
+ .text          0x4000ba20      0x114 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
+                0x4000ba20                memchr
+ .text          0x4000bb34      0xd2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+                0x4000bb34                _Balloc
+                0x4000bbc0                _Bfree
+                0x4000bbdc                __multadd
+                0x4000bcb8                __s2b
+                0x4000bda0                __hi0bits
+                0x4000bdfc                __lo0bits
+                0x4000be90                __i2b
+                0x4000beb4                __multiply
+                0x4000c09c                __pow5mult
+                0x4000c1a0                __lshift
+                0x4000c2ac                __mcmp
+                0x4000c30c                __mdiff
+                0x4000c450                __ulp
+                0x4000c4b4                __b2d
+                0x4000c588                __d2b
+                0x4000c694                __ratio
+                0x4000c71c                _mprec_log10
+                0x4000c774                __copybits
+                0x4000c7e4                __any_on
+ .text          0x4000c860       0x6c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
+                0x4000c860                __fpclassifyd
+ .text          0x4000c8cc      0x230 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
+                0x4000c8cc                strcmp
+ .text          0x4000cafc     0x128c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+                0x4000cafc                __ssprint_r
+                0x4000cca8                _svfiprintf_r
+ .text          0x4000dd88       0x9c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
+                0x4000dd88                _calloc_r
+ .text          0x4000de24      0x134 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
+                0x4000de24                memmove
+ .text          0x4000df58       0xf4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
+                0x4000df58                memset
+ .text          0x4000e04c      0x56c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
+                0x4000e04c                _realloc_r
+ .text          0x4000e5b8      0x114 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
+                0x4000e5b8                __aeabi_uidiv
+                0x4000e5b8                __udivsi3
+                0x4000e6ac                __aeabi_uidivmod
+ .text          0x4000e6cc        0x4 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
+                0x4000e6cc                __aeabi_idiv0
+                0x4000e6cc                __aeabi_ldiv0
+ .text          0x4000e6d0      0x41c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
+                0x4000e6d0                __aeabi_drsub
+                0x4000e6d8                __aeabi_dsub
+                0x4000e6d8                __subdf3
+                0x4000e6dc                __aeabi_dadd
+                0x4000e6dc                __adddf3
+                0x4000e9ec                __floatunsidf
+                0x4000e9ec                __aeabi_ui2d
+                0x4000ea10                __floatsidf
+                0x4000ea10                __aeabi_i2d
+                0x4000ea38                __aeabi_f2d
+                0x4000ea38                __extendsfdf2
+                0x4000ea78                __floatundidf
+                0x4000ea78                __aeabi_ul2d
+                0x4000ea8c                __floatdidf
+                0x4000ea8c                __aeabi_l2d
+ .text          0x4000eaec      0x49c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
+                0x4000eaec                __aeabi_dmul
+                0x4000eaec                __muldf3
+                0x4000ed7c                __divdf3
+                0x4000ed7c                __aeabi_ddiv
+ .text          0x4000ef88      0x144 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
+                0x4000ef88                __gtdf2
+                0x4000ef88                __gedf2
+                0x4000ef90                __ltdf2
+                0x4000ef90                __ledf2
+                0x4000ef98                __nedf2
+                0x4000ef98                __eqdf2
+                0x4000ef98                __cmpdf2
+                0x4000f020                __aeabi_cdrcmple
+                0x4000f03c                __aeabi_cdcmpeq
+                0x4000f03c                __aeabi_cdcmple
+                0x4000f054                __aeabi_dcmpeq
+                0x4000f06c                __aeabi_dcmplt
+                0x4000f084                __aeabi_dcmple
+                0x4000f09c                __aeabi_dcmpge
+                0x4000f0b4                __aeabi_dcmpgt
+ .text          0x4000f0cc       0x5c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
+                0x4000f0cc                __aeabi_d2iz
+                0x4000f0cc                __fixdfsi
+ .text          0x4000f128       0x3c C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
+                0x4000f128                __aeabi_uldivmod
+ .text          0x4000f164       0x84 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
+                0x4000f164                __gnu_ldivmod_helper
+                0x4000f1a8                __gnu_uldivmod_helper
+ .text          0x4000f1e8      0x4d0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+                0x4000f1e8                __divdi3
+ .text          0x4000f6b8      0x470 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+                0x4000f6b8                __udivdi3
+ .text          0x4000fb28       0x48 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
+                0x4000fb28                __clzsi2
+                0x4000fb70                . = ALIGN (0x4)
 
-.glue_7         0x4000f810        0x0
+.glue_7         0x4000fb70        0x0
  .glue_7        0x00000000        0x0 linker stubs
 
-.glue_7t        0x4000f810        0x0
+.glue_7t        0x4000fb70        0x0
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x4000f810        0x0
+.vfp11_veneer   0x4000fb70        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x4000f810        0x0
+.v4_bx          0x4000fb70        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x4000f810        0x0
+.iplt           0x4000fb70        0x0
  .iplt          0x00000000        0x0 Exception.o
 
-.rodata         0x4000f810     0x87bc
-                0x4000f810                __RO_BASE__ = .
+.rodata         0x4000fb70     0x87c8
+                0x4000fb70                __RO_BASE__ = .
  *(.rodata)
- .rodata        0x4000f810     0x82b8 graphics.o
-                0x4000f818                HanTable
-                0x40013d78                han16x16
-                0x40016ac8                eng8x16
- .rodata        0x40017ac8      0x104 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
-                0x40017ac8                _ctype_
- .rodata        0x40017bcc        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
-                0x40017bcc                _global_impure_ptr
- .rodata        0x40017bd0       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
- .rodata        0x40017bf0      0x128 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
-                0x40017c00                __mprec_tens
-                0x40017cc8                __mprec_tinytens
-                0x40017cf0                __mprec_bigtens
- .rodata        0x40017d18       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+ .rodata        0x4000fb70     0x82b8 graphics.o
+                0x4000fb78                HanTable
+                0x400140d8                han16x16
+                0x40016e28                eng8x16
+ .rodata        0x40017e28      0x104 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
+                0x40017e28                _ctype_
+ .rodata        0x40017f2c        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+                0x40017f2c                _global_impure_ptr
+ .rodata        0x40017f30       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+ .rodata        0x40017f50      0x128 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+                0x40017f60                __mprec_tens
+                0x40018028                __mprec_tinytens
+                0x40018050                __mprec_bigtens
+ .rodata        0x40018078       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
  *(.rodata.*)
  .rodata.str1.4
-                0x40017d38      0x1ec Exception.o
+                0x40018098      0x1e4 Exception.o
  .rodata.str1.4
-                0x40017f24       0x2d graphics.o
+                0x4001827c       0x2d graphics.o
                                  0x30 (size before relaxing)
- *fill*         0x40017f51        0x3 
+ *fill*         0x400182a9        0x3 
  .rodata.str1.4
-                0x40017f54        0xe main.o
+                0x400182ac        0xe main.o
                                  0x10 (size before relaxing)
- *fill*         0x40017f62        0x2 
+ *fill*         0x400182ba        0x2 
  .rodata.str1.4
-                0x40017f64        0x4 uart.o
+                0x400182bc       0x13 page.o
+                                 0x14 (size before relaxing)
+ *fill*         0x400182cf        0x1 
  .rodata.str1.4
-                0x40017f68        0x2 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+                0x400182d0        0x4 uart.o
+ .rodata.str1.4
+                0x400182d4        0x2 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
                                   0x4 (size before relaxing)
- *fill*         0x40017f6a        0x2 
+ *fill*         0x400182d6        0x2 
  .rodata.str1.4
-                0x40017f6c       0x42 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+                0x400182d8       0x42 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
                                  0x44 (size before relaxing)
- *fill*         0x40017fae        0x2 
+ *fill*         0x4001831a        0x2 
  .rodata.str1.4
-                0x40017fb0       0x10 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+                0x4001831c       0x10 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
                                  0x14 (size before relaxing)
  .rodata.str1.4
-                0x40017fc0        0xc C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+                0x4001832c        0xc C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
                                  0x14 (size before relaxing)
  .rodata.str1.4
                 0x00000000       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
-                0x40017fcc                . = ALIGN (0x4)
-                0x40017fcc                __RO_LIMIT__ = .
+                0x40018338                . = ALIGN (0x4)
+                0x40018338                __RO_LIMIT__ = .
 
-.ARM.extab      0x40017fcc        0x0
- .ARM.extab     0x40017fcc        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
- .ARM.extab     0x40017fcc        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+.ARM.extab      0x40018338        0x0
+ .ARM.extab     0x40018338        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+ .ARM.extab     0x40018338        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
 
-.ARM.exidx      0x40017fcc        0x8
- .ARM.exidx     0x40017fcc        0x8 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
- .ARM.exidx     0x40017fd4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+.ARM.exidx      0x40018338        0x8
+ .ARM.exidx     0x40018338        0x8 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+ .ARM.exidx     0x40018340        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
                                   0x8 (size before relaxing)
 
-.rel.dyn        0x40017fd4        0x0
+.rel.dyn        0x40018340        0x0
  .rel.iplt      0x00000000        0x0 Exception.o
 
-.data           0x40017fd8      0xba4
-                0x40017fd8                __RW_BASE__ = .
+.data           0x40018340      0xbcc
+                0x40018340                __RW_BASE__ = .
  *(.data)
- .data          0x40017fd8      0x208 Exception.o
-                0x40017fd8                SVC_Handler_Vector
-                0x40018000                ISR_Vector
- .data          0x400181e0        0x0 cp15.o
- .data          0x400181e0       0xb0 gic.o
-                0x400181e0                ICCICR
-                0x400181f0                ICCPMR
-                0x40018200                ICDISER0
-                0x40018210                ICDISERn
-                0x40018220                ICDICER0
-                0x40018230                ICDICERn
-                0x40018240                ICDIPR0
-                0x40018250                ICDIPTR0
-                0x40018260                ICDICPR0
-                0x40018270                ICCIAR
-                0x40018280                ICCEOIR
- .data          0x40018290       0x28 graphics.o
-                0x40018290                ArrFbSel
- .data          0x400182b8        0x0 key.o
- .data          0x400182b8        0x0 led.o
- .data          0x400182b8        0x0 main.o
- .data          0x400182b8        0x0 page.o
- .data          0x400182b8        0x0 pcb_allocator.o
- .data          0x400182b8        0x0 process.o
- .data          0x400182b8        0x0 runtime.o
- .data          0x400182b8        0x0 sdhc.o
- .data          0x400182b8        0x0 timer.o
- .data          0x400182b8        0x0 uart.o
- .data          0x400182b8        0x0 asm_function.o
- .data          0x400182b8        0x0 cp15a.o
- .data          0x400182b8        0x0 crt0.o
- .data          0x400182b8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
- .data          0x400182b8        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
-                0x400182b8                __ctype_ptr__
- .data          0x400182bc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
- .data          0x400182bc      0x410 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
-                0x400182bc                __malloc_av_
-                0x400186c4                __malloc_sbrk_base
-                0x400186c8                __malloc_trim_threshold
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
- .data          0x400186cc        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
- *fill*         0x400186cc        0x4 
- .data          0x400186d0      0x430 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
-                0x400186d0                _impure_ptr
- .data          0x40018b00        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
- .data          0x40018b00        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
- .data          0x40018b00        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
- .data          0x40018b00       0x7c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
-                0x40018b20                __mb_cur_max
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
- .data          0x40018b7c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
+ .data          0x40018340      0x230 Exception.o
+                0x40018340                SVC_Handler_Vector
+                0x40018390                ISR_Vector
+ .data          0x40018570        0x0 cp15.o
+ .data          0x40018570       0xb0 gic.o
+                0x40018570                ICCICR
+                0x40018580                ICCPMR
+                0x40018590                ICDISER0
+                0x400185a0                ICDISERn
+                0x400185b0                ICDICER0
+                0x400185c0                ICDICERn
+                0x400185d0                ICDIPR0
+                0x400185e0                ICDIPTR0
+                0x400185f0                ICDICPR0
+                0x40018600                ICCIAR
+                0x40018610                ICCEOIR
+ .data          0x40018620       0x28 graphics.o
+                0x40018620                ArrFbSel
+ .data          0x40018648        0x0 irq_queue.o
+ .data          0x40018648        0x0 key.o
+ .data          0x40018648        0x0 led.o
+ .data          0x40018648        0x0 main.o
+ .data          0x40018648        0x0 page.o
+ .data          0x40018648        0x0 pcb_allocator.o
+ .data          0x40018648        0x0 process.o
+ .data          0x40018648        0x0 runtime.o
+ .data          0x40018648        0x0 sdhc.o
+ .data          0x40018648        0x0 timer.o
+ .data          0x40018648        0x0 uart.o
+ .data          0x40018648        0x0 asm_function.o
+ .data          0x40018648        0x0 cp15a.o
+ .data          0x40018648        0x0 crt0.o
+ .data          0x40018648        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
+ .data          0x40018648        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
+                0x40018648                __ctype_ptr__
+ .data          0x4001864c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
+ .data          0x4001864c      0x410 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
+                0x4001864c                __malloc_av_
+                0x40018a54                __malloc_sbrk_base
+                0x40018a58                __malloc_trim_threshold
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
+ .data          0x40018a5c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
+ *fill*         0x40018a5c        0x4 
+ .data          0x40018a60      0x430 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+                0x40018a60                _impure_ptr
+ .data          0x40018e90        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+ .data          0x40018e90        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+ .data          0x40018e90        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+ .data          0x40018e90       0x7c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+                0x40018eb0                __mb_cur_max
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+ .data          0x40018f0c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
  *(.data.*)
-                0x40018b7c                . = ALIGN (0x4)
-                0x40018b7c                __RW_LIMIT__ = .
+                0x40018f0c                . = ALIGN (0x4)
+                0x40018f0c                __RW_LIMIT__ = .
 
-.igot.plt       0x40018b7c        0x0
+.igot.plt       0x40018f0c        0x0
  .igot.plt      0x00000000        0x0 Exception.o
 
-.bss            0x40018b80      0xd38
-                0x40018b80                __ZI_BASE__ = .
+.bss            0x40018f10      0xd80
+                0x40018f10                __ZI_BASE__ = .
  *(.bss)
- .bss           0x40018b80       0x18 Exception.o
-                0x40018b80                sd_insert_flag
-                0x40018b84                sd_rd_buffer_flag
-                0x40018b88                sd_wr_buffer_flag
-                0x40018b8c                sd_tr_flag
-                0x40018b90                sd_command_complete_flag
- .bss           0x40018b98        0x0 cp15.o
- .bss           0x40018b98        0x0 gic.o
- .bss           0x40018b98       0xb8 graphics.o
-                0x40018b98                pLcdFb
-                0x40018b9c                ArrWinInfo
-                0x40018c3c                Selected_win
-                0x40018c40                Selected_frame
-                0x40018c48                Display_frame
- .bss           0x40018c50        0x0 key.o
- .bss           0x40018c50        0x0 led.o
- .bss           0x40018c50        0x0 main.o
- .bss           0x40018c50      0xc08 page.o
-                0x40018c50                swap_flag
-                0x40018c54                page_counter
-                0x40018c58                PA_page_info_list
- .bss           0x40019858        0xc pcb_allocator.o
-                0x40019858                ptr_PCB_Creator
-                0x4001985c                ptr_PCB_Current
-                0x40019860                ptr_PCB_Head
- .bss           0x40019864        0x8 process.o
-                0x40019864                pcb_app0_addr
-                0x40019868                pcb_app1_addr
- .bss           0x4001986c        0x4 runtime.o
- .bss           0x40019870        0x2 sdhc.o
-                0x40019870                sd_rca
- .bss           0x40019872        0x0 timer.o
- .bss           0x40019872        0x0 uart.o
- .bss           0x40019872        0x0 asm_function.o
- .bss           0x40019872        0x0 cp15a.o
- .bss           0x40019872        0x0 crt0.o
- .bss           0x40019872        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
- .bss           0x40019872        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
- .bss           0x40019872        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
- *fill*         0x40019872        0x2 
- .bss           0x40019874       0x34 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
-                0x40019874                __malloc_top_pad
-                0x40019878                __malloc_current_mallinfo
-                0x400198a0                __malloc_max_sbrked_mem
-                0x400198a4                __malloc_max_total_mem
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
- .bss           0x400198a8        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
- .bss           0x400198a8        0xc C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
-                0x400198a8                _PathLocale
-                0x400198ac                __mlocale_changed
-                0x400198b0                __nlocale_changed
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
- .bss           0x400198b4        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
+ .bss           0x40018f10       0x30 Exception.o
+                0x40018f10                irq_request_table
+                0x40018f28                sd_insert_flag
+                0x40018f2c                sd_rd_buffer_flag
+                0x40018f30                sd_wr_buffer_flag
+                0x40018f34                sd_tr_flag
+                0x40018f38                sd_command_complete_flag
+ .bss           0x40018f40        0x0 cp15.o
+ .bss           0x40018f40        0x0 gic.o
+ .bss           0x40018f40       0xb8 graphics.o
+                0x40018f40                pLcdFb
+                0x40018f44                ArrWinInfo
+                0x40018fe4                Selected_win
+                0x40018fe8                Selected_frame
+                0x40018ff0                Display_frame
+ .bss           0x40018ff8       0x30 irq_queue.o
+                0x40018ff8                rear_key4_app1
+                0x40018ffc                front_key4_app1
+                0x40019000                rear_key3_app1
+                0x40019004                front_key3_app1
+                0x40019008                rear_uart_app1
+                0x4001900c                front_uart_app1
+                0x40019010                rear_key4_app0
+                0x40019014                front_key4_app0
+                0x40019018                rear_key3_app0
+                0x4001901c                front_key3_app0
+                0x40019020                rear_uart_app0
+                0x40019024                front_uart_app0
+ .bss           0x40019028        0x0 key.o
+ .bss           0x40019028        0x0 led.o
+ .bss           0x40019028        0x0 main.o
+ .bss           0x40019028      0xc08 page.o
+                0x40019028                swap_flag
+                0x4001902c                page_counter
+                0x40019030                PA_page_info_list
+ .bss           0x40019c30        0xc pcb_allocator.o
+                0x40019c30                ptr_PCB_Creator
+                0x40019c34                ptr_PCB_Current
+                0x40019c38                ptr_PCB_Head
+ .bss           0x40019c3c        0x8 process.o
+                0x40019c3c                pcb_app0_addr
+                0x40019c40                pcb_app1_addr
+ .bss           0x40019c44        0x4 runtime.o
+ .bss           0x40019c48        0x2 sdhc.o
+                0x40019c48                sd_rca
+ .bss           0x40019c4a        0x0 timer.o
+ .bss           0x40019c4a        0x0 uart.o
+ .bss           0x40019c4a        0x0 asm_function.o
+ .bss           0x40019c4a        0x0 cp15a.o
+ .bss           0x40019c4a        0x0 crt0.o
+ .bss           0x40019c4a        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
+ .bss           0x40019c4a        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
+ .bss           0x40019c4a        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
+ *fill*         0x40019c4a        0x2 
+ .bss           0x40019c4c       0x34 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
+                0x40019c4c                __malloc_top_pad
+                0x40019c50                __malloc_current_mallinfo
+                0x40019c78                __malloc_max_sbrked_mem
+                0x40019c7c                __malloc_max_total_mem
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+ .bss           0x40019c80        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+ .bss           0x40019c80        0xc C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+                0x40019c80                _PathLocale
+                0x40019c84                __mlocale_changed
+                0x40019c88                __nlocale_changed
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+ .bss           0x40019c8c        0x0 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
  *(.bss.*)
-                0x400198b4                . = ALIGN (0x4)
-                0x400198b4                __ZI_LIMIT__ = .
- COMMON         0x400198b4        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
-                0x400198b4                errno
+                0x40019c8c                . = ALIGN (0x4)
+                0x40019c8c                __ZI_LIMIT__ = .
+ COMMON         0x40019c8c        0x4 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+                0x40019c8c                errno
 OUTPUT(dram_0x40000000.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x5f0e
- .debug_info    0x00000000      0x85f Exception.o
- .debug_info    0x0000085f     0x1ca4 cp15.o
- .debug_info    0x00002503      0x390 gic.o
- .debug_info    0x00002893     0x163b graphics.o
- .debug_info    0x00003ece      0x244 key.o
- .debug_info    0x00004112       0xd7 led.o
- .debug_info    0x000041e9      0x4f6 main.o
- .debug_info    0x000046df      0x2dc page.o
- .debug_info    0x000049bb      0x22e pcb_allocator.o
- .debug_info    0x00004be9      0x22f process.o
- .debug_info    0x00004e18      0x172 runtime.o
- .debug_info    0x00004f8a      0x693 sdhc.o
- .debug_info    0x0000561d      0x19c timer.o
- .debug_info    0x000057b9      0x5e1 uart.o
- .debug_info    0x00005d9a       0x81 asm_function.o
- .debug_info    0x00005e1b       0x7a cp15a.o
- .debug_info    0x00005e95       0x79 crt0.o
+.debug_info     0x00000000     0x65cc
+ .debug_info    0x00000000      0xc1b Exception.o
+ .debug_info    0x00000c1b     0x1ca4 cp15.o
+ .debug_info    0x000028bf      0x390 gic.o
+ .debug_info    0x00002c4f     0x163b graphics.o
+ .debug_info    0x0000428a      0x264 irq_queue.o
+ .debug_info    0x000044ee      0x244 key.o
+ .debug_info    0x00004732       0xd7 led.o
+ .debug_info    0x00004809      0x554 main.o
+ .debug_info    0x00004d5d      0x31c page.o
+ .debug_info    0x00005079      0x22e pcb_allocator.o
+ .debug_info    0x000052a7      0x22f process.o
+ .debug_info    0x000054d6      0x172 runtime.o
+ .debug_info    0x00005648      0x693 sdhc.o
+ .debug_info    0x00005cdb      0x19c timer.o
+ .debug_info    0x00005e77      0x5e1 uart.o
+ .debug_info    0x00006458       0x81 asm_function.o
+ .debug_info    0x000064d9       0x7a cp15a.o
+ .debug_info    0x00006553       0x79 crt0.o
 
-.debug_abbrev   0x00000000     0x171b
- .debug_abbrev  0x00000000      0x1e9 Exception.o
- .debug_abbrev  0x000001e9      0x2dc cp15.o
- .debug_abbrev  0x000004c5       0xc0 gic.o
- .debug_abbrev  0x00000585      0x370 graphics.o
- .debug_abbrev  0x000008f5      0x112 key.o
- .debug_abbrev  0x00000a07       0x95 led.o
- .debug_abbrev  0x00000a9c      0x135 main.o
- .debug_abbrev  0x00000bd1      0x14b page.o
- .debug_abbrev  0x00000d1c      0x178 pcb_allocator.o
- .debug_abbrev  0x00000e94      0x150 process.o
- .debug_abbrev  0x00000fe4       0xf3 runtime.o
- .debug_abbrev  0x000010d7      0x279 sdhc.o
- .debug_abbrev  0x00001350       0xc4 timer.o
- .debug_abbrev  0x00001414      0x2cb uart.o
- .debug_abbrev  0x000016df       0x14 asm_function.o
- .debug_abbrev  0x000016f3       0x14 cp15a.o
- .debug_abbrev  0x00001707       0x14 crt0.o
+.debug_abbrev   0x00000000     0x1923
+ .debug_abbrev  0x00000000      0x2ac Exception.o
+ .debug_abbrev  0x000002ac      0x2dc cp15.o
+ .debug_abbrev  0x00000588       0xc0 gic.o
+ .debug_abbrev  0x00000648      0x370 graphics.o
+ .debug_abbrev  0x000009b8      0x128 irq_queue.o
+ .debug_abbrev  0x00000ae0      0x112 key.o
+ .debug_abbrev  0x00000bf2       0x95 led.o
+ .debug_abbrev  0x00000c87      0x135 main.o
+ .debug_abbrev  0x00000dbc      0x168 page.o
+ .debug_abbrev  0x00000f24      0x178 pcb_allocator.o
+ .debug_abbrev  0x0000109c      0x150 process.o
+ .debug_abbrev  0x000011ec       0xf3 runtime.o
+ .debug_abbrev  0x000012df      0x279 sdhc.o
+ .debug_abbrev  0x00001558       0xc4 timer.o
+ .debug_abbrev  0x0000161c      0x2cb uart.o
+ .debug_abbrev  0x000018e7       0x14 asm_function.o
+ .debug_abbrev  0x000018fb       0x14 cp15a.o
+ .debug_abbrev  0x0000190f       0x14 crt0.o
 
-.debug_loc      0x00000000     0x6407
- .debug_loc     0x00000000      0x364 Exception.o
- .debug_loc     0x00000364     0x292e cp15.o
- .debug_loc     0x00002c92      0x2fc gic.o
- .debug_loc     0x00002f8e     0x2911 graphics.o
- .debug_loc     0x0000589f       0x5b key.o
- .debug_loc     0x000058fa       0x21 led.o
- .debug_loc     0x0000591b       0xbd main.o
- .debug_loc     0x000059d8      0x2ed page.o
- .debug_loc     0x00005cc5       0x78 pcb_allocator.o
- .debug_loc     0x00005d3d       0x68 process.o
- .debug_loc     0x00005da5       0x41 runtime.o
- .debug_loc     0x00005de6      0x1cc sdhc.o
- .debug_loc     0x00005fb2       0x95 timer.o
- .debug_loc     0x00006047      0x3c0 uart.o
+.debug_loc      0x00000000     0x676d
+ .debug_loc     0x00000000      0x55f Exception.o
+ .debug_loc     0x0000055f     0x292e cp15.o
+ .debug_loc     0x00002e8d      0x2fc gic.o
+ .debug_loc     0x00003189     0x2911 graphics.o
+ .debug_loc     0x00005a9a       0xe6 irq_queue.o
+ .debug_loc     0x00005b80       0x5b key.o
+ .debug_loc     0x00005bdb       0x21 led.o
+ .debug_loc     0x00005bfc       0xbd main.o
+ .debug_loc     0x00005cb9      0x372 page.o
+ .debug_loc     0x0000602b       0x78 pcb_allocator.o
+ .debug_loc     0x000060a3       0x68 process.o
+ .debug_loc     0x0000610b       0x41 runtime.o
+ .debug_loc     0x0000614c      0x1cc sdhc.o
+ .debug_loc     0x00006318       0x95 timer.o
+ .debug_loc     0x000063ad      0x3c0 uart.o
 
-.debug_aranges  0x00000000      0x220
+.debug_aranges  0x00000000      0x240
  .debug_aranges
                 0x00000000       0x20 Exception.o
  .debug_aranges
@@ -813,79 +851,84 @@ OUTPUT(dram_0x40000000.elf elf32-littlearm)
  .debug_aranges
                 0x00000060       0x20 graphics.o
  .debug_aranges
-                0x00000080       0x20 key.o
+                0x00000080       0x20 irq_queue.o
  .debug_aranges
-                0x000000a0       0x20 led.o
+                0x000000a0       0x20 key.o
  .debug_aranges
-                0x000000c0       0x20 main.o
+                0x000000c0       0x20 led.o
  .debug_aranges
-                0x000000e0       0x20 page.o
+                0x000000e0       0x20 main.o
  .debug_aranges
-                0x00000100       0x20 pcb_allocator.o
+                0x00000100       0x20 page.o
  .debug_aranges
-                0x00000120       0x20 process.o
+                0x00000120       0x20 pcb_allocator.o
  .debug_aranges
-                0x00000140       0x20 runtime.o
+                0x00000140       0x20 process.o
  .debug_aranges
-                0x00000160       0x20 sdhc.o
+                0x00000160       0x20 runtime.o
  .debug_aranges
-                0x00000180       0x20 timer.o
+                0x00000180       0x20 sdhc.o
  .debug_aranges
-                0x000001a0       0x20 uart.o
+                0x000001a0       0x20 timer.o
  .debug_aranges
-                0x000001c0       0x20 asm_function.o
+                0x000001c0       0x20 uart.o
  .debug_aranges
-                0x000001e0       0x20 cp15a.o
+                0x000001e0       0x20 asm_function.o
  .debug_aranges
-                0x00000200       0x20 crt0.o
+                0x00000200       0x20 cp15a.o
+ .debug_aranges
+                0x00000220       0x20 crt0.o
 
-.debug_line     0x00000000     0x1be5
- .debug_line    0x00000000      0x12e Exception.o
- .debug_line    0x0000012e      0x369 cp15.o
- .debug_line    0x00000497       0x75 gic.o
- .debug_line    0x0000050c      0x75b graphics.o
- .debug_line    0x00000c67       0x7d key.o
- .debug_line    0x00000ce4       0x37 led.o
- .debug_line    0x00000d1b       0xe4 main.o
- .debug_line    0x00000dff      0x1c4 page.o
- .debug_line    0x00000fc3      0x11d pcb_allocator.o
- .debug_line    0x000010e0      0x134 process.o
- .debug_line    0x00001214       0xa1 runtime.o
- .debug_line    0x000012b5      0x332 sdhc.o
- .debug_line    0x000015e7       0x7e timer.o
- .debug_line    0x00001665      0x288 uart.o
- .debug_line    0x000018ed       0xa0 asm_function.o
- .debug_line    0x0000198d      0x18a cp15a.o
- .debug_line    0x00001b17       0xce crt0.o
+.debug_line     0x00000000     0x1d50
+ .debug_line    0x00000000      0x184 Exception.o
+ .debug_line    0x00000184      0x369 cp15.o
+ .debug_line    0x000004ed       0x75 gic.o
+ .debug_line    0x00000562      0x75b graphics.o
+ .debug_line    0x00000cbd      0x112 irq_queue.o
+ .debug_line    0x00000dcf       0x7d key.o
+ .debug_line    0x00000e4c       0x37 led.o
+ .debug_line    0x00000e83       0xe6 main.o
+ .debug_line    0x00000f69      0x1c5 page.o
+ .debug_line    0x0000112e      0x11d pcb_allocator.o
+ .debug_line    0x0000124b      0x134 process.o
+ .debug_line    0x0000137f       0xa1 runtime.o
+ .debug_line    0x00001420      0x332 sdhc.o
+ .debug_line    0x00001752       0x7e timer.o
+ .debug_line    0x000017d0      0x288 uart.o
+ .debug_line    0x00001a58       0xa0 asm_function.o
+ .debug_line    0x00001af8      0x18a cp15a.o
+ .debug_line    0x00001c82       0xce crt0.o
 
-.debug_str      0x00000000     0x116c
- .debug_str     0x00000000      0x3bc Exception.o
-                                0x404 (size before relaxing)
- .debug_str     0x000003bc      0x3e8 cp15.o
+.debug_str      0x00000000     0x1342
+ .debug_str     0x00000000      0x574 Exception.o
+                                0x5bc (size before relaxing)
+ .debug_str     0x00000574      0x3e8 cp15.o
                                 0x51c (size before relaxing)
- .debug_str     0x000007a4      0x157 gic.o
+ .debug_str     0x0000095c      0x157 gic.o
                                 0x317 (size before relaxing)
- .debug_str     0x000008fb      0x2f3 graphics.o
+ .debug_str     0x00000ab3      0x2ee graphics.o
                                 0x4c1 (size before relaxing)
- .debug_str     0x00000bee       0x6f key.o
+ .debug_str     0x00000da1       0x2f irq_queue.o
+                                0x2b1 (size before relaxing)
+ .debug_str     0x00000dd0       0x6f key.o
                                 0x262 (size before relaxing)
- .debug_str     0x00000c5d        0xf led.o
+ .debug_str     0x00000e3f        0xf led.o
                                 0x1af (size before relaxing)
- .debug_str     0x00000c6c       0x73 main.o
-                                0x439 (size before relaxing)
- .debug_str     0x00000cdf      0x111 page.o
-                                0x31b (size before relaxing)
- .debug_str     0x00000df0       0x9e pcb_allocator.o
+ .debug_str     0x00000e4e       0x84 main.o
+                                0x458 (size before relaxing)
+ .debug_str     0x00000ed2      0x10a page.o
+                                0x33b (size before relaxing)
+ .debug_str     0x00000fdc       0x99 pcb_allocator.o
                                 0x259 (size before relaxing)
- .debug_str     0x00000e8e       0x6b process.o
+ .debug_str     0x00001075       0x6b process.o
                                 0x250 (size before relaxing)
- .debug_str     0x00000ef9       0x78 runtime.o
+ .debug_str     0x000010e0       0x78 runtime.o
                                 0x212 (size before relaxing)
- .debug_str     0x00000f71      0x11b sdhc.o
+ .debug_str     0x00001158      0x11b sdhc.o
                                 0x38c (size before relaxing)
- .debug_str     0x0000108c       0x1b timer.o
+ .debug_str     0x00001273       0x1b timer.o
                                 0x21f (size before relaxing)
- .debug_str     0x000010a7       0xc5 uart.o
+ .debug_str     0x0000128e       0xb4 uart.o
                                 0x336 (size before relaxing)
 
 .comment        0x00000000       0x30
@@ -894,6 +937,7 @@ OUTPUT(dram_0x40000000.elf elf32-littlearm)
  .comment       0x00000000       0x31 cp15.o
  .comment       0x00000000       0x31 gic.o
  .comment       0x00000000       0x31 graphics.o
+ .comment       0x00000000       0x31 irq_queue.o
  .comment       0x00000000       0x31 key.o
  .comment       0x00000000       0x31 led.o
  .comment       0x00000000       0x31 main.o
@@ -916,146 +960,149 @@ OUTPUT(dram_0x40000000.elf elf32-littlearm)
  .ARM.attributes
                 0x000000bd       0x3f graphics.o
  .ARM.attributes
-                0x000000fc       0x3f key.o
+                0x000000fc       0x3f irq_queue.o
  .ARM.attributes
-                0x0000013b       0x3f led.o
+                0x0000013b       0x3f key.o
  .ARM.attributes
-                0x0000017a       0x3f main.o
+                0x0000017a       0x3f led.o
  .ARM.attributes
-                0x000001b9       0x3f page.o
+                0x000001b9       0x3f main.o
  .ARM.attributes
-                0x000001f8       0x3f pcb_allocator.o
+                0x000001f8       0x3f page.o
  .ARM.attributes
-                0x00000237       0x3f process.o
+                0x00000237       0x3f pcb_allocator.o
  .ARM.attributes
-                0x00000276       0x3f runtime.o
+                0x00000276       0x3f process.o
  .ARM.attributes
-                0x000002b5       0x3f sdhc.o
+                0x000002b5       0x3f runtime.o
  .ARM.attributes
-                0x000002f4       0x3f timer.o
+                0x000002f4       0x3f sdhc.o
  .ARM.attributes
-                0x00000333       0x3f uart.o
+                0x00000333       0x3f timer.o
  .ARM.attributes
-                0x00000372       0x2b asm_function.o
+                0x00000372       0x3f uart.o
  .ARM.attributes
-                0x0000039d       0x2b cp15a.o
+                0x000003b1       0x2b asm_function.o
  .ARM.attributes
-                0x000003c8       0x2b crt0.o
+                0x000003dc       0x2b cp15a.o
  .ARM.attributes
-                0x000003f3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
+                0x00000407       0x2b crt0.o
  .ARM.attributes
-                0x00000423       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
+                0x00000432       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
  .ARM.attributes
-                0x00000453       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
+                0x00000462       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-ctype_.o)
  .ARM.attributes
-                0x00000483       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
+                0x00000492       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
  .ARM.attributes
-                0x000004b3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
+                0x000004c2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
  .ARM.attributes
-                0x000004e3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
+                0x000004f2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
  .ARM.attributes
-                0x00000513       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
+                0x00000522       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
  .ARM.attributes
-                0x00000543       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
+                0x00000552       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
  .ARM.attributes
-                0x00000573       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
+                0x00000582       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
  .ARM.attributes
-                0x000005a3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
+                0x000005b2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
  .ARM.attributes
-                0x000005d3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
+                0x000005e2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
  .ARM.attributes
-                0x00000603       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
+                0x00000612       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
  .ARM.attributes
-                0x00000633       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+                0x00000642       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-impure.o)
  .ARM.attributes
-                0x00000663       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+                0x00000672       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
  .ARM.attributes
-                0x00000693       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+                0x000006a2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
  .ARM.attributes
-                0x000006c3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+                0x000006d2       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
  .ARM.attributes
-                0x000006f3       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
+                0x00000702       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
  .ARM.attributes
-                0x00000723       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+                0x00000732       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
  .ARM.attributes
-                0x00000753       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
+                0x00000762       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
  .ARM.attributes
-                0x00000783       0x16 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
+                0x00000792       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
  .ARM.attributes
-                0x00000799       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+                0x000007c2       0x16 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strcmp.o)
  .ARM.attributes
-                0x000007c9       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
+                0x000007d8       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
  .ARM.attributes
-                0x000007f9       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
+                0x00000808       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
  .ARM.attributes
-                0x00000829       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
+                0x00000838       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
  .ARM.attributes
-                0x00000859       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
+                0x00000868       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
  .ARM.attributes
-                0x00000889       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
+                0x00000898       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
  .ARM.attributes
-                0x000008a1       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
+                0x000008c8       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
  .ARM.attributes
-                0x000008b9       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
+                0x000008e0       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_dvmd_tls.o)
  .ARM.attributes
-                0x000008d1       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
+                0x000008f8       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_addsubdf3.o)
  .ARM.attributes
-                0x000008e9       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
+                0x00000910       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_muldivdf3.o)
  .ARM.attributes
-                0x00000901       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
+                0x00000928       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_cmpdf2.o)
  .ARM.attributes
-                0x00000919       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
+                0x00000940       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_arm_fixdfsi.o)
  .ARM.attributes
-                0x00000931       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
+                0x00000958       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
  .ARM.attributes
-                0x00000961       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+                0x00000970       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
  .ARM.attributes
-                0x00000991       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+                0x000009a0       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
  .ARM.attributes
-                0x000009c1       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
+                0x000009d0       0x30 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+ .ARM.attributes
+                0x00000a00       0x18 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_clzsi2.o)
 
-.debug_frame    0x00000000     0x16fc
- .debug_frame   0x00000000      0x26c Exception.o
- .debug_frame   0x0000026c      0x2f4 cp15.o
- .debug_frame   0x00000560       0xd0 gic.o
- .debug_frame   0x00000630      0x2cc graphics.o
- .debug_frame   0x000008fc       0x84 key.o
- .debug_frame   0x00000980       0x30 led.o
- .debug_frame   0x000009b0       0x58 main.o
- .debug_frame   0x00000a08       0x3c page.o
- .debug_frame   0x00000a44       0x88 pcb_allocator.o
- .debug_frame   0x00000acc       0xa8 process.o
- .debug_frame   0x00000b74       0x74 runtime.o
- .debug_frame   0x00000be8      0x178 sdhc.o
- .debug_frame   0x00000d60       0x40 timer.o
- .debug_frame   0x00000da0      0x114 uart.o
- .debug_frame   0x00000eb4       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
- .debug_frame   0x00000ef4       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
- .debug_frame   0x00000f34       0x38 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
- .debug_frame   0x00000f6c       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
- .debug_frame   0x00000f98       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
- .debug_frame   0x00000fc8       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
- .debug_frame   0x00000ff4       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
- .debug_frame   0x00001014       0x50 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
- .debug_frame   0x00001064       0x44 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
- .debug_frame   0x000010a8       0x50 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
- .debug_frame   0x000010f8       0x48 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
- .debug_frame   0x00001140       0x3c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
- .debug_frame   0x0000117c       0x64 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
- .debug_frame   0x000011e0       0x98 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
- .debug_frame   0x00001278       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
- .debug_frame   0x000012a4      0x20c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
- .debug_frame   0x000014b0       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
- .debug_frame   0x000014d0       0x64 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
- .debug_frame   0x00001534       0x28 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
- .debug_frame   0x0000155c       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
- .debug_frame   0x00001588       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
- .debug_frame   0x000015b4       0x38 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
- .debug_frame   0x000015ec       0x20 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
- .debug_frame   0x0000160c       0x28 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x00001634       0x58 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
- .debug_frame   0x0000168c       0x38 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
- .debug_frame   0x000016c4       0x38 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
+.debug_frame    0x00000000     0x1810
+ .debug_frame   0x00000000      0x324 Exception.o
+ .debug_frame   0x00000324      0x2f4 cp15.o
+ .debug_frame   0x00000618       0xd0 gic.o
+ .debug_frame   0x000006e8      0x2cc graphics.o
+ .debug_frame   0x000009b4       0x5c irq_queue.o
+ .debug_frame   0x00000a10       0x84 key.o
+ .debug_frame   0x00000a94       0x30 led.o
+ .debug_frame   0x00000ac4       0x58 main.o
+ .debug_frame   0x00000b1c       0x3c page.o
+ .debug_frame   0x00000b58       0x88 pcb_allocator.o
+ .debug_frame   0x00000be0       0xa8 process.o
+ .debug_frame   0x00000c88       0x74 runtime.o
+ .debug_frame   0x00000cfc      0x178 sdhc.o
+ .debug_frame   0x00000e74       0x40 timer.o
+ .debug_frame   0x00000eb4      0x114 uart.o
+ .debug_frame   0x00000fc8       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-atoi.o)
+ .debug_frame   0x00001008       0x40 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
+ .debug_frame   0x00001048       0x38 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mallocr.o)
+ .debug_frame   0x00001080       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memcpy-stub.o)
+ .debug_frame   0x000010ac       0x30 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mlock.o)
+ .debug_frame   0x000010dc       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x00001108       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strlen.o)
+ .debug_frame   0x00001128       0x50 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-strtol.o)
+ .debug_frame   0x00001178       0x44 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-vsprintf.o)
+ .debug_frame   0x000011bc       0x50 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-freer.o)
+ .debug_frame   0x0000120c       0x48 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
+ .debug_frame   0x00001254       0x3c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
+ .debug_frame   0x00001290       0x64 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-dtoa.o)
+ .debug_frame   0x000012f4       0x98 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
+ .debug_frame   0x0000138c       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
+ .debug_frame   0x000013b8      0x20c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-mprec.o)
+ .debug_frame   0x000015c4       0x20 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-s_fpclassify.o)
+ .debug_frame   0x000015e4       0x64 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
+ .debug_frame   0x00001648       0x28 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-callocr.o)
+ .debug_frame   0x00001670       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memmove.o)
+ .debug_frame   0x0000169c       0x2c C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memset.o)
+ .debug_frame   0x000016c8       0x38 C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reallocr.o)
+ .debug_frame   0x00001700       0x20 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivsi3.o)
+ .debug_frame   0x00001720       0x28 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x00001748       0x58 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(bpabi.o)
+ .debug_frame   0x000017a0       0x38 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_divdi3.o)
+ .debug_frame   0x000017d8       0x38 C:\CodeSourcery\Sourcery G++ Lite/lib/gcc/arm-none-eabi/4.8.1\libgcc.a(_udivdi3.o)
 
 .debug_ranges   0x00000000     0x11e0
  .debug_ranges  0x00000000      0xb50 cp15.o
@@ -1071,6 +1118,9 @@ App_Read                                          main.o
 ArrFbSel                                          graphics.o
 ArrWinInfo                                        graphics.o
                                                   main.o
+Clear_Key3_Request                                Exception.o
+Clear_Key4_Request                                Exception.o
+Clear_Uart_Request                                Exception.o
 CoCleanAndInvalidateDCacheIndex                   cp15a.o
                                                   cp15.o
 CoCleanAndInvalidateDCacheVA                      cp15a.o
@@ -1136,6 +1186,7 @@ CoInvalidateDTlb                                  cp15a.o
 CoInvalidateDTlbASID                              cp15a.o
 CoInvalidateDTlbVA                                cp15a.o
 CoInvalidateICache                                cp15a.o
+                                                  page.o
                                                   cp15.o
 CoInvalidateITlb                                  cp15a.o
 CoInvalidateITlbASID                              cp15a.o
@@ -1234,9 +1285,13 @@ Get_Context_And_Switch                            asm_function.o
                                                   Exception.o
 Get_Heap_Base                                     runtime.o
 Get_Heap_Limit                                    runtime.o
+Get_Key3_Response                                 Exception.o
+Get_Key4_Response                                 Exception.o
+Get_Name                                          Exception.o
 Get_SP                                            asm_function.o
 Get_Stack_Base                                    runtime.o
 Get_Stack_Limit                                   runtime.o
+Get_Uart_Response                                 Exception.o
 Get_User_SP                                       asm_function.o
 Get_User_Stack_Base                               asm_function.o
 Get_User_Stack_Limit                              asm_function.o
@@ -1255,14 +1310,16 @@ ICDISERn                                          gic.o
 ISR_Vector                                        Exception.o
                                                   crt0.o
 Invalid_ISR                                       Exception.o
+Is_Name_Input_Done                                Exception.o
 Key3_ISR                                          Exception.o
 Key4_ISR                                          Exception.o
 Key_Get_Key_Pressed                               key.o
                                                   Exception.o
 Key_ISR_Enable                                    key.o
-Key_ISR_Init                                      key.o
-Key_Poll_Init                                     key.o
                                                   main.o
+Key_ISR_Init                                      key.o
+                                                  main.o
+Key_Poll_Init                                     key.o
 Key_Wait_Key_Pressed                              key.o
                                                   Exception.o
 Key_Wait_Key_Released                             key.o
@@ -1362,6 +1419,9 @@ Save_Context                                      asm_function.o
                                                   Exception.o
 Selected_frame                                    graphics.o
 Selected_win                                      graphics.o
+Send_Key3_Request                                 Exception.o
+Send_Key4_Request                                 Exception.o
+Send_Uart_Request                                 Exception.o
 SetTransTable                                     cp15.o
                                                   main.o
 SetTransTable_app1                                cp15.o
@@ -1383,9 +1443,11 @@ Uart1_Get_Char                                    uart.o
 Uart1_Get_Pressed                                 uart.o
 Uart1_ISR                                         Exception.o
 Uart1_ISR_Enable                                  uart.o
+                                                  main.o
 Uart1_Init                                        uart.o
                                                   main.o
 Uart1_Printf                                      uart.o
+                                                  page.o
                                                   main.o
                                                   graphics.o
                                                   Exception.o
@@ -1602,13 +1664,30 @@ call_isb                                          asm_function.o
 cleanup_glue                                      C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
 demand_paging                                     page.o
                                                   Exception.o
+dequeue                                           irq_queue.o
+                                                  Exception.o
 eng8x16                                           graphics.o
+enqueue                                           irq_queue.o
+                                                  Exception.o
 errno                                             C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-reent.o)
                                                   C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-sbrkr.o)
 exynos_smc                                        cp15a.o
                                                   cp15.o
 free                                              C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
                                                   process.o
+                                                  irq_queue.o
+front_key3_app0                                   irq_queue.o
+                                                  Exception.o
+front_key3_app1                                   irq_queue.o
+                                                  Exception.o
+front_key4_app0                                   irq_queue.o
+                                                  Exception.o
+front_key4_app1                                   irq_queue.o
+                                                  Exception.o
+front_uart_app0                                   irq_queue.o
+                                                  Exception.o
+front_uart_app1                                   irq_queue.o
+                                                  Exception.o
 get_current_pcb_adr                               pcb_allocator.o
 get_next_pcb_adr                                  pcb_allocator.o
                                                   Exception.o
@@ -1617,10 +1696,12 @@ init_second_table_descriptor_App0                 cp15.o
                                                   main.o
 init_second_table_descriptor_App1                 cp15.o
                                                   main.o
+irq_request_table                                 Exception.o
 localeconv                                        C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-locale.o)
 malloc                                            C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-malloc.o)
                                                   process.o
                                                   pcb_allocator.o
+                                                  irq_queue.o
 memchr                                            C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-memchr-stub.o)
                                                   C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfiprintf.o)
                                                   C:\CodeSourcery\Sourcery G++ Lite/arm-none-eabi/lib\libc.a(lib_a-svfprintf.o)
@@ -1649,6 +1730,18 @@ ptr_PCB_Creator                                   pcb_allocator.o
 ptr_PCB_Current                                   pcb_allocator.o
                                                   asm_function.o
 ptr_PCB_Head                                      pcb_allocator.o
+rear_key3_app0                                    irq_queue.o
+                                                  Exception.o
+rear_key3_app1                                    irq_queue.o
+                                                  Exception.o
+rear_key4_app0                                    irq_queue.o
+                                                  Exception.o
+rear_key4_app1                                    irq_queue.o
+                                                  Exception.o
+rear_uart_app0                                    irq_queue.o
+                                                  Exception.o
+rear_uart_app1                                    irq_queue.o
+                                                  Exception.o
 sd_command_complete_flag                          Exception.o
                                                   sdhc.o
 sd_insert_flag                                    Exception.o

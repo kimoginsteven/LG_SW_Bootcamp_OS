@@ -11,6 +11,7 @@ unsigned int swap_flag = 0;
 
 void demand_paging (unsigned int fault_addr)
 {
+	//Uart_Printf("Demand Paging %d\n", page_counter);
 	unsigned int cur_asid = Get_ASID();
 	unsigned int section_id = fault_addr >> 20;
 	unsigned int mask;
@@ -29,6 +30,7 @@ void demand_paging (unsigned int fault_addr)
 	/* 메모리 공간이 꽉차서 swap out을 진행해야할 경우 */
 	if (swap_flag)
 	{
+		//Uart_Printf("Swapping\n");
 		page_counter %= MAX_PA_PAGE;
 		swapout_asid = PA_page_info_list[page_counter].asid;
 		swapout_virtual_address = PA_page_info_list[page_counter].virtual_address;
@@ -64,12 +66,12 @@ void demand_paging (unsigned int fault_addr)
 
 		/* swap_out 하는 페이지의 asid에 따라 ttbr 설정 */
 		// CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //WBWA
-		// CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); // WT
+		//CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); // WT
 		CoSetTTBase((swapout_asid == 1 ? 0x44080000 : 0x44000000)|(0<<6)|(1<<3)|(0<<1)|(1<<0)); // WT_WBWA
 
 		memcpy((void *)(swapout_virtual_address >> 12 << 12), (void *)(swapout_physical_address), 0x1000); // swap file로 swap out
 		fst_TT_entry = (unsigned int *)MMU_PAGE_TABLE_BASE + swapout_section_id;
-
+		CoInvalidateICache();
 		/* 각 section 별 2차 table의 주소로 매핑하기 위한 offset 설정 */
 		if (swapout_section_id == 0x441)
 		{
@@ -86,6 +88,11 @@ void demand_paging (unsigned int fault_addr)
 		else if (swapout_section_id == 0x444)
 		{
 			snd_table_offset = 0xc00;
+		}
+		else
+		{
+			Uart_Printf("Section ID error \n");
+			for(;;);
 		}
 
 		/* 2차 T/T Entry 주소 구하기 */
@@ -200,9 +207,9 @@ void demand_paging (unsigned int fault_addr)
 	*snd_TT_entry |= (0x3 << 4) | 0x2; //access bit 접근가능하도록 바꿔주기
 
 	/* cache 정책 설정: WT */
-//	*snd_tt_descriptor |= WT; // WT 설정
+//	*snd_TT_entry |= WT; // WT 설정
 //	mask = ~(7u << 6);
-//	*snd_tt_descriptor &= mask; // Tex bit 000
+//	*snd_TT_entry &= mask; // Tex bit 000
 
 	/* cache 정책 설정: WT_WBWA */
 	*snd_TT_entry |= WT_WBWA_PAGE;

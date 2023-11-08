@@ -3,6 +3,11 @@
 #include "pcb_allocator.h"
 #include "cp15.h"
 #include "page.h"
+#include "irq_queue.h"
+
+/* 시연을 위한 코드 */
+
+int irq_request_table[2][3] = {{0,0,0},{0,0,0}};
 
 void Undef_Handler(unsigned int addr, unsigned int mode)
 {
@@ -244,7 +249,16 @@ void Uart1_ISR(void)
 	GIC_Clear_Pending_Clear(0,85);
 	GIC_Write_EOI(0, 85);
 
-	Uart1_Printf("Uart1 => %c\n", rURXH1);
+	Uart1_Printf("%c \n", rURXH1);
+	if (irq_request_table[0][0])
+	{
+		enqueue(&front_uart_app0, &rear_uart_app0, rURXH1);
+	}
+	if (irq_request_table[1][0])
+	{
+		enqueue(&front_uart_app1, &rear_uart_app1, rURXH1);
+	}
+
 }
 
 void Key3_ISR(void)
@@ -255,6 +269,14 @@ void Key3_ISR(void)
 
 	GIC_Clear_Pending_Clear(0,51);
 	GIC_Write_EOI(0, 51);
+	if (irq_request_table[0][1])
+	{
+		enqueue(&front_key3_app0, &rear_key3_app0, 1);
+	}
+	if (irq_request_table[1][1])
+	{
+		enqueue(&front_key3_app1, &rear_key3_app1, 1);
+	}
 }
 
 void Key4_ISR(void)
@@ -265,6 +287,14 @@ void Key4_ISR(void)
 
 	GIC_Clear_Pending_Clear(0,52);
 	GIC_Write_EOI(0, 52);
+	if (irq_request_table[0][2])
+	{
+		enqueue(&front_key4_app0, &rear_key4_app0, 1);
+	}
+	if (irq_request_table[1][2])
+	{
+		enqueue(&front_key4_app1, &rear_key4_app1, 1);
+	}
 }
 
 void Timer0_ISR(void)
@@ -322,9 +352,10 @@ void Timer0_ISR_context_switch(void)
 	Uart1_Printf("\n\n\n");
 	*/
 
+
 	/* TTBR 값을 재설정 app0 --> 0x44000000 app1 --> 0x44080000 */
 	// CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(1<<6)|(1<<3)|(0<<1)|(0<<0)); //WBWA
-	// CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
+	//CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(2<<3)|(0<<1)|(1<<0)); //WT
 	CoSetTTBase((Get_ASID() == 1 ? 0x44080000 : 0x44000000) |(0<<6)|(1<<3)|(0<<1)|(1<<0)); //WT_WBWA
 	CoInvalidateMainTlb();
 	// context 복원 그리고 분기
@@ -351,17 +382,105 @@ long long Long_Long_Add(long long a, long long b)
 	return a + b;
 }
 
+/*** 시연 영상을 위한 함수   ***/
+int	Is_Name_Input_Done(void)
+{
+	return 1;
+}
+
+char *Get_Name(void)
+{
+	return 0x0;
+}
+
+void Send_Uart_Request(int app_num)
+{
+	irq_request_table[app_num][0] = 1;
+}
+
+void Send_Key3_Request(int app_num)
+{
+	irq_request_table[app_num][1] = 1;
+}
+
+void Send_Key4_Request(int app_num)
+{
+	irq_request_table[app_num][2] = 1;
+}
+
+void Clear_Uart_Request(int app_num)
+{
+	irq_request_table[app_num][0] = 0;
+}
+
+void Clear_Key3_Request(int app_num)
+{
+	irq_request_table[app_num][1] = 0;
+}
+
+void Clear_Key4_Request(int app_num)
+{
+	irq_request_table[app_num][2] = 0;
+}
+
+int Get_Uart_Response(int app_num)
+{
+	if (irq_request_table[app_num][0])
+	{
+		if (app_num == 0)
+			return dequeue(&front_uart_app0, &rear_uart_app0);
+		else
+		{
+			return dequeue(&front_uart_app1, &rear_uart_app1);
+		}
+	}
+	return 0;
+}
+
+int Get_Key3_Response(int app_num)
+{
+	if (irq_request_table[app_num][1])
+	{
+		if (app_num == 0)
+			return dequeue(&front_key3_app0, &rear_key3_app0);
+		else
+			return dequeue(&front_key3_app1, &rear_key3_app1);
+	}
+	return 0;
+}
+
+int Get_Key4_Response(int app_num)
+{
+	if (irq_request_table[app_num][2])
+	{
+		if (app_num == 0)
+			return dequeue(&front_key4_app0, &rear_key4_app0);
+		else
+			return dequeue(&front_key4_app1, &rear_key4_app1);
+	}
+	return 0;
+}
+
 void *SVC_Handler_Vector[] =
 {
-		(void *) Lcd_Clr_Screen,        // 0
-		(void *) Lcd_Draw_BMP,		    // 1
-		(void *) Uart_Printf,		    // 2
-		(void *) LED_Display,		    // 3
-		(void *) Key_Get_Key_Pressed,   // 4
-		(void *) Key_Wait_Key_Released, // 5
-		(void *) Key_Wait_Key_Pressed,  // 6
-		(void *) Print_Hello,           // 7
-		(void *) Sqr,					// 8
-		(void *) Long_Long_Add			// 9
+		(void *) Lcd_Clr_Screen,
+		(void *) Lcd_Draw_BMP,
+		(void *) Uart_Printf,
+		(void *) LED_Display,
+		(void *) Key_Get_Key_Pressed,
+		(void *) Key_Wait_Key_Released,
+		(void *) Key_Wait_Key_Pressed,
+		(void *) Print_Hello,
+		(void *) Sqr,
+		(void *) Long_Long_Add,
+		(void *) Send_Uart_Request,
+		(void *) Send_Key3_Request,
+		(void *) Send_Key4_Request,
+		(void *) Clear_Uart_Request,
+		(void *) Clear_Key3_Request,
+		(void *) Clear_Key4_Request,
+		(void *) Get_Uart_Response,
+		(void *) Get_Key3_Response,
+		(void *) Get_Key4_Response
 };
 

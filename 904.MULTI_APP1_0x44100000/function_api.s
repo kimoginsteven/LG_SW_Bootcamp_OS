@@ -54,3 +54,50 @@ Long_Long_Add:
 	svc		9
 	bx		lr
 
+@IRQ_Request를 위한 함수
+	.global Send_Uart_Request
+Send_Uart_Request:
+	svc		10
+	bx		lr
+
+	.global Send_Key3_Request
+Send_Key3_Request:
+	svc		11
+	bx		lr
+
+	.global Send_Key4_Request
+Send_Key4_Request:
+	svc		12
+	bx		lr
+
+	.global Clear_Uart_Request
+Clear_Uart_Request:
+	svc		13
+	bx		lr
+
+	.global Clear_Key3_Request
+Clear_Key3_Request:
+	svc		14
+	bx		lr
+
+	.global Clear_Key4_Request
+Clear_Key4_Request:
+	svc		15
+	bx		lr
+
+	.global Get_Uart_Response
+Get_Uart_Response:
+	svc		16
+	bx		lr
+
+	.global Get_Key3_Response
+Get_Key3_Response:
+	svc		17
+	bx		lr
+
+	.global Get_Key4_Response
+Get_Key4_Response:
+	svc		18
+	bx		lr
+
+	.end

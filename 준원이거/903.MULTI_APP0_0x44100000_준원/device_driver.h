@@ -26,15 +26,6 @@ extern int Uart1_GetIntNum(void);
 extern void Print_Hello(void);
 extern int Sqr(int a);
 extern long long Long_Long_Add(long long a, long long b);
-extern void Send_Uart_Request(int app_num);
-extern void Send_Key3_Request(int app_num);
-extern void Send_Key4_Request(int app_num);
-extern void Clear_Uart_Request(int app_num);
-extern void Clear_Key3_Request(int app_num);
-extern void Clear_Key4_Request(int app_num);
-extern int Get_Uart_Response(int app_num);
-extern int Get_Key3_Response(int app_num);
-extern int Get_Key4_Response(int app_num);
 
 // key.c
 extern int Key_Get_Key_Pressed(void);
