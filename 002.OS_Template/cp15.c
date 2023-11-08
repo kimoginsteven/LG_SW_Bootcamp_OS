@@ -204,29 +204,29 @@ void init_second_table_descriptor_App0(void)
 	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP0; //section1
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 | WT; //WT 설정
-		//*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
+		//*pTT++ = 0x2 | WT; //WT 설정
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x400) ; //section2
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 | WT;
-		//*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 | WT;
-		//*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP0 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 | WT;
-		//*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 }
 
@@ -238,25 +238,29 @@ void init_second_table_descriptor_App1(void)
 	pTT = (unsigned int *) SND_PAGE_TABLE_BASE_APP1; //section1
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 |(2<<2);
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x400); //section2
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 |(2<<2);
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0x800); //section3
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 |(2<<2);
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 
 	pTT = (unsigned int *) (SND_PAGE_TABLE_BASE_APP1 + 0xc00); //section4
 	for (i=0; i<256; i++)
 	{
-		*pTT++ = 0x2 |(2<<2);
+		//*pTT++ = 0x2 | WT;
+		*pTT++ = 0x2 |(WT_WBWA_PAGE); //WT_WBWA 설정
 	}
 }
 

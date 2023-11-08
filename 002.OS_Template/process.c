@@ -5,13 +5,13 @@
 struct PCB *pcb_app0_addr;
 struct PCB *pcb_app1_addr;
 
-// app 마다 pcb 동적 할당
+/* app 마다 pcb 동적 할당 */
 void pcb_malloc(void) {
 	pcb_app0_addr = (struct PCB *) malloc(sizeof(struct PCB));
 	pcb_app1_addr = (struct PCB *) malloc(sizeof(struct PCB));
 }
 
-// 각 app의 PCB 초기화
+/* 각 app의 PCB 초기화  */
 void pcb_init(unsigned int RAM_APP0, unsigned int STACK_BASE_APP0, unsigned int STACK_BASE_APP1) {
 	// app0의 PCB 초기화
 	pcb_app0_addr->PID = 0x0;
@@ -30,13 +30,13 @@ void pcb_init(unsigned int RAM_APP0, unsigned int STACK_BASE_APP0, unsigned int 
 	pcb_app1_addr->PC = RAM_APP0; //VA 영역
 }
 
-// pcb linked list 구조체안에 생성된 pcb의 주소값 넣어주기
+/* pcb linked list 구조체안에 생성된 pcb의 주소값 넣어주기 */
 void pcb_add_to_list(void) {
 	add_pcb((PCB_ADR) pcb_app0_addr);
 	add_pcb((PCB_ADR) pcb_app1_addr);
 }
 
-// pcb 공간 free
+/* pcb 공간 free */
 void pcb_free(void) {
 	free(pcb_app0_addr);
 	free(pcb_app1_addr);

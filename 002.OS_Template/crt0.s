@@ -102,10 +102,6 @@ HandlerPabort:
 	blx		Page_Fault_Handler_PABT
 	ldmfd	sp!, {r0-r3, r12, lr}
 	subs	pc, lr, #4	@발생한 주소로 다시 복귀
-	@sub		lr, lr, #4
-	@push 	{r0, lr}
-	@ldmfd	sp!, {r0, pc}^
-	@subs	pc, lr, #4	@발생한 주소로 다시 복귀
 
     .extern SVC_Handler_Vector
 HandlerSVC:
