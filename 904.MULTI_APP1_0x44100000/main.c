@@ -3,13 +3,21 @@
 #define DELAY	2000
 
 
-	int i;
-	int uart_response;
-	int key3_response;
-	int key4_response;
-	char name[100];
-	int name_idx = 0;
-	int tmp;
+#define BLACK	0x0000
+#define WHITE	0xffff
+#define BLUE	0x001f
+#define GREEN	0x07e0
+#define RED		0xf800
+#define YELLOW	0xffe0
+#define VIOLET	0xf81f
+
+int i;
+int uart_response;
+int key3_response;
+int key4_response;
+char name[100];
+int name_idx = 0;
+int tmp;
 
 void Main(void)
 {
@@ -25,6 +33,7 @@ void Main(void)
 
 
 	Uart_Printf("당신의 이름을 입력하시고 enter를 쳐주세요!\n");
+	Lcd_Printf(600, 300, WHITE, BLACK, 1, 1, "당신의 이름을 입력하시고 enter를 쳐주세요!");
 
 	for (;;)
 	{
@@ -41,18 +50,38 @@ void Main(void)
 				{
 					if (name_idx == 0)
 						continue;
+
+
+
 					name[name_idx] = '\0';
 					Uart1_Printf("=====================================\n");
 					Uart1_Printf("Hi ***%s***, You look Perfect Tonight~~\n", name);
 					Uart1_Printf("=====================================\n\n");
 					name_idx = 0;
 					Uart_Printf("당신의 이름을 입력하시고 enter를 쳐주세요!\n");
+
+					Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+//					Lcd_Printf(600, 285, WHITE, BLACK, 1, 1,"=====================================");
+//					Lcd_Printf(600, 300, WHITE, BLACK, 1, 1,"Hi ***%s***, You look Perfect Tonight~~", name);
+//					Lcd_Printf(600, 315, WHITE, BLACK, 1, 1,"=====================================");
+
+					Lcd_Printf(540, 284, WHITE, BLACK, 2, 2,"Hi %s, ", name);
+					Lcd_Printf(540, 316, WHITE, BLACK, 2, 2,"You look Perfect Tonight~~");
+
+					Delay(DELAY*6);
+					Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+					Lcd_Printf(600, 300, WHITE, BLACK, 1, 1,"당신의 이름을 입력하시고 enter를 쳐주세요!\n");
 				}
 				else if (!((65 <= uart_response && uart_response <= 90) || (97 <= uart_response && uart_response <= 122)))
 				{
 					Uart1_Printf("Please input a valid character!!!\n");
+					Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+					Lcd_Printf(600, 300, WHITE, BLACK, 1, 1, "Please input a valid character!!!");
+					Delay(DELAY*6);
+					Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
 					name_idx = 0;
 					Uart_Printf("당신의 이름을 입력하시고 enter를 쳐주세요!\n");
+					Lcd_Printf(600, 300, WHITE, BLACK, 1, 1, "당신의 이름을 입력하시고 enter를 쳐주세요!");
 				}
 				else {
 					tmp = (97 <= uart_response && uart_response <= 122) ? uart_response - 32 : uart_response;
@@ -80,6 +109,19 @@ void Main(void)
 				Uart_Printf("	|  |     |  | |_ | \n");
 				Uart_Printf("	|  `----.|  |__| | \n");
 				Uart_Printf("	|_______| \\______| \n\n");
+
+
+				Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+				Lcd_Printf(660, 260, WHITE, BLACK, 1, 1," __        _______ ");
+				Lcd_Printf(660, 276, WHITE, BLACK, 1, 1,"|  |      /  _____|");
+				Lcd_Printf(660, 292, WHITE, BLACK, 1, 1,"|  |     |  |  __  ");
+				Lcd_Printf(660, 308, WHITE, BLACK, 1, 1,"|  |     |  | |_ | ");
+				Lcd_Printf(660, 324, WHITE, BLACK, 1, 1,"|  `----.|  |__| | ");
+				Lcd_Printf(660, 340, WHITE, BLACK, 1, 1,"|_______| \\______|");
+
+				Delay(DELAY*4);
+				Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+				Lcd_Printf(600, 300, WHITE, BLACK, 1, 1, "당신의 이름을 입력하시고 enter를 쳐주세요!");
 			}
 			if (key4_response)
 			{
@@ -98,6 +140,28 @@ void Main(void)
 				Uart_Printf("	|   _  <  |  |  |  | |  |  |  |     |  |     |  |       /  /_\\  \\   |  |\\/|  | |   ___/  \n");
 				Uart_Printf("	|  |_)  | |  `--'  | |  `--'  |     |  |     |  `----. /  _____  \\  |  |  |  | |  |      \n");
 				Uart_Printf("	|______/   \\______/   \\______/      |__|      \\______|/__/     \\__\\ |__|  |__| | _|      \n");
+
+				Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+
+				Lcd_Printf(540, 212, WHITE, BLACK, 1, 1,".______     ______     ______   .___________.");
+				Lcd_Printf(540, 228, WHITE, BLACK, 1, 1,"|   _  \\   /  __  \\   /  __  \\  |           |");
+				Lcd_Printf(540, 244, WHITE, BLACK, 1, 1,"|  |_)  | |  |  |  | |  |  |  | `---|  |----`");
+				Lcd_Printf(540, 260, WHITE, BLACK, 1, 1,"|   _  <  |  |  |  | |  |  |  |     |  | ");
+				Lcd_Printf(540, 276, WHITE, BLACK, 1, 1,"|  |_)  | |  `--\'  | |  `--\'  |     |  |");
+				Lcd_Printf(540, 292, WHITE, BLACK, 1, 1,"|______/   \\______/   \\______/      |__|     ");
+
+				Lcd_Printf(540, 308, WHITE, BLACK, 1, 1,"  ______      ___      .___  ___. .______   ");
+				Lcd_Printf(540, 324, WHITE, BLACK, 1, 1," /      |    /   \\     |   \\/   | |   _  \\  ");
+				Lcd_Printf(540, 340, WHITE, BLACK, 1, 1,"|  ,----\'   /  ^  \\    |  \\  /  | |  |_)  | ");
+				Lcd_Printf(540, 356, WHITE, BLACK, 1, 1,"|  |       /  /_\\  \\   |  |\\/|  | |   ___/  ");
+				Lcd_Printf(540, 372, WHITE, BLACK, 1, 1,"|  `----. /  _____  \\  |  |  |  | |  |      ");
+				Lcd_Printf(540, 388, WHITE, BLACK, 1, 1," \\______|/__/     \\__\\ |__|  |__| | _|      ");
+
+
+				Delay(DELAY*4);
+				Lcd_Draw_Bar(512, 0, 1024, 600, BLACK);
+				Lcd_Printf(600, 300, WHITE, BLACK, 1, 1, "당신의 이름을 입력하시고 enter를 쳐주세요!");
+
 			}
 		}
 	}

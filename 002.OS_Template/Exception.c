@@ -481,6 +481,8 @@ void *SVC_Handler_Vector[] =
 		(void *) Clear_Key4_Request,
 		(void *) Get_Uart_Response,
 		(void *) Get_Key3_Response,
-		(void *) Get_Key4_Response
+		(void *) Get_Key4_Response,
+		(void *) Lcd_Printf,
+		(void *) Lcd_Draw_Bar
 };
 

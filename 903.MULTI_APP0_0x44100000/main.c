@@ -36,22 +36,23 @@ void Main(void)
 {
 	Lcd_Clr_Screen();
 
-	// IRQ ¿äÃ» ÁøÇà
+	// IRQ
+	Send_Uart_Request(0);
 	Send_Key3_Request(0);
 	Send_Key4_Request(0);
+
 
 	int key3_response_1;
 	int key4_response_1;
 	int key3_response_2;
 	int key4_response_2;
-	int tmp = 0;
-
 	// key3_response = Get_Key3_Response(0);
 	// key4_response = Get_Key4_Response(0);
 
 	Lcd_Clr_Screen();
 	int x, y;
 	int i;
+
 	for(;;)
 	{
 		i = 0;
@@ -61,19 +62,19 @@ void Main(void)
 		{
 			if (i == 10)
 			{
-				x = 240;
+				x = 256;
 				y = 119;
 			}
 			if (i == 11)
 			{
-				x = 513;
+				x = 513 - 15;
 				y = 75;
 			}
 			if (i == 12){
 				x = 272;
 				y = 165;
 			}
-			Lcd_Draw_BMP(x,y,img[i]);
+			Lcd_Draw_BMP(x - 256,y,img[i]);
 			Delay(DELAY);
 			if (i >= 9)
 			{
@@ -81,11 +82,27 @@ void Main(void)
 			}
 			key3_response_1 = Get_Key3_Response(0);
 			key4_response_1 = Get_Key4_Response(0);
+
+
+
+
+
+
+
+
+
+
 			if (key3_response_1)
 			{
 				for (;;)
 				{
 					key4_response_2 = Get_Key4_Response(0);
+
+
+
+
+
+
 					if (key4_response_2)
 						break;
 				}
@@ -95,6 +112,11 @@ void Main(void)
 			{
 				for (;;)
 				{
+
+
+
+
+
 					key3_response_2 = Get_Key3_Response(0);
 					if (key3_response_2)
 						break;
@@ -102,7 +124,8 @@ void Main(void)
 			}
 
 
-			Lcd_Clr_Screen();
+			//Lcd_Clr_Screen();
+			Lcd_Draw_Bar(0,0, 512, 600, BLACK);
 		}
 //		Lcd_Draw_BMP(240,119,img[10]);
 //		Delay(DELAY*2);
@@ -126,5 +149,5 @@ void Main(void)
 
 }
 //void Lcd_Printf(int x, int y, int color, int bkcolor, int zx, int zy, char *fmt,   ...)
-// : (x,   y)¿¡ ±Û¾¾»ö color,    ¹è°æ»ö bkcolor,    °¡·Î zx¹è,    »õ·Î zy¹è·Î È®´ëÇÑ ¹®ÀÚ¿­ Ãâ·Â
-// 1024*600, ±ÛÀÚ Å©±â 1, 1, ±âÁØ °¡·Î´Â ¹®ÀÚ 128°³, ¼¼·Î´Â ¹®ÀÚ 40°³ ±æÀÌ°¡ ³Ñ¾î°¥°æ¿ì ¸ðµâ·¯µÊ
+// : (x,   y)ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ color,    ï¿½ï¿½ï¿½ï¿½ bkcolor,    ï¿½ï¿½ï¿½ï¿½ zxï¿½ï¿½,    ï¿½ï¿½ï¿½ï¿½ zyï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½
+// 1024*600, ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ 1, 1, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ 128ï¿½ï¿½, ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ 40ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ñ¾î°¥ï¿½ï¿½ï¿½ ï¿½ï¿½â·¯ï¿½ï¿½

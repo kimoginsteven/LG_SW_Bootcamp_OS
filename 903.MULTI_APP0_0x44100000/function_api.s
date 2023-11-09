@@ -99,4 +99,12 @@ Get_Key3_Response:
 Get_Key4_Response:
 	svc		18
 	bx		lr
+	.global Lcd_Printf
+Lcd_Printf:
+	svc		19
+	bx 		lr
+	.global Lcd_Draw_Bar
+Lcd_Draw_Bar:
+	svc		20
+	bx 		lr
 	.end
